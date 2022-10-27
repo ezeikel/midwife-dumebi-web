@@ -6,19 +6,63 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "jest --config test/jest.lint.ts",
+    "check-types": "tsc",
+    "prettier": "prettier --ignore-path .gitignore --write \"**/*.+(js|jsx|json|ts|tsx|html|md)\"",
+    "format": "yarn prettier --write",
+    "check-format": "yarn prettier --list-different",
+    "test": "is-ci \"test:coverage\" \"test:watch\"",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --watch",
+    "prepare": "husky install"
+  },
+  "jest-runner-eslint": {
+    "cliOptions": {
+      "ignorePath": "./.gitignore"
+    }
+  },
+  "lint-staged": {
+    "**/*.+(js|jsx|json|ts|tsx|html|md)": [
+      "prettier --ignore-path .gitignore --write",
+      "jest --findRelatedTests"
+    ]
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.1.2",
+    "@fortawesome/free-brands-svg-icons": "^6.1.2",
+    "@fortawesome/pro-duotone-svg-icons": "^6.1.2",
+    "@fortawesome/pro-light-svg-icons": "^6.1.2",
+    "@fortawesome/pro-regular-svg-icons": "^6.1.2",
+    "@fortawesome/pro-solid-svg-icons": "^6.1.2",
+    "@fortawesome/pro-thin-svg-icons": "^6.1.2",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@fortawesome/sharp-solid-svg-icons": "^6.2.0",
+    "@mailchimp/mailchimp_marketing": "^3.0.78",
+    "@stripe/stripe-js": "^1.35.0",
+    "animate.css": "^4.1.1",
+    "axios": "^1.1.3",
+    "clsx": "^1.2.1",
+    "formik": "^2.2.9",
     "next": "12.2.5",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-responsive": "^9.0.0-beta.10",
+    "react-toastify": "^9.0.8"
   },
   "devDependencies": {
+    "@types/mailchimp__mailchimp_marketing": "^3.0.6",
     "@types/node": "18.7.13",
     "@types/react": "18.0.17",
     "@types/react-dom": "18.0.6",
+    "@types/yup": "^0.32.0",
+    "autoprefixer": "^10.4.8",
     "eslint": "8.23.0",
     "eslint-config-next": "12.2.5",
+    "husky": "^8.0.1",
+    "postcss": "^8.4.16",
+    "tailwindcss": "^3.1.8",
+    "twin.macro": "^2.8.2",
     "typescript": "4.8.2"
   }
 }
