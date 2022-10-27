@@ -1,9 +1,10 @@
+import { MouseEvent as ReactMouseEvent } from "react";
 import clsx from "clsx";
 import Icon from "../Icon/Icon";
 
 type ButtonProps = {
   text: string;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onClick?: (event: ReactMouseEvent<HTMLButtonElement, MouseEvent>) => void;
   className?: string;
   type?: "button" | "submit";
   variant?: "primary" | "outline" | "link";

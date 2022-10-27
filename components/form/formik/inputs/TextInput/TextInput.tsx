@@ -23,13 +23,13 @@ const TextInput = ({
   ...props
 }: TextInputProps) => {
   const [field] = useField({ ...props, name });
-  const inputEl = useRef(null);
+  const inputEl = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (initialFocus) {
       inputEl.current?.focus();
     }
-  }, []);
+  }, [initialFocus]);
 
   return (
     <div

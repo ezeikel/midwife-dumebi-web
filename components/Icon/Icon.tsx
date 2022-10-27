@@ -1,9 +1,14 @@
+import {
+  IconName,
+  IconPrefix,
+  SizeProp,
+} from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type IconProps = {
-  name: string;
-  type?: string;
-  size?: string;
+  name: IconName;
+  type?: IconPrefix;
+  size?: SizeProp;
   color?: string;
   className?: string;
 };

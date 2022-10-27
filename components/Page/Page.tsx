@@ -5,7 +5,6 @@ import Header from "../Header/Header";
 import Meta from "./Meta";
 
 type PageProps = {
-  className?: string;
   children: ReactNode;
 };
 

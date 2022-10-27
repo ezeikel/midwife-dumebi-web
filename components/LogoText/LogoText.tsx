@@ -11,7 +11,7 @@ const LogoText = ({ className }: LogoTextProps) => {
   return (
     <h1
       className={clsx("text-3xl font-bennet-banner", {
-        [className]: !!className,
+        [className!]: !!className,
       })}
     >
       {isMobile ? "BM" : "Black Midwifery"}

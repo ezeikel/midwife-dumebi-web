@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     );
 
-    res.json({ result: "success" });
+    return res.json({ result: "success" });
   } catch (error) {
     return res.status(500).json({ error });
   }

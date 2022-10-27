@@ -1,8 +1,22 @@
+import {
+  IconName,
+  IconPrefix,
+  SizeProp,
+} from "@fortawesome/fontawesome-svg-core";
 import SubscribeForm from "../forms/SubscribeForm/SubscribeForm";
 import Icon from "../Icon/Icon";
 import LogoText from "../LogoText/LogoText";
 
-const SOCIAL_LINKS = [
+type SocialLink = {
+  url: string;
+  icon: {
+    name: IconName;
+    type: IconPrefix;
+    size: SizeProp;
+  };
+};
+
+const SOCIAL_LINKS: SocialLink[] = [
   {
     url: "https://www.instagram.com/midwifedumebi",
     icon: {

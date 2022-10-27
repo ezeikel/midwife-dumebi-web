@@ -37,7 +37,8 @@ const SubscribeForm = ({ className }: SubscribeFormProps) => (
         // show success toast
         toast("You have succesfully subscribed.", { transition: bounce });
       } catch (error) {
-        console.error(error);
+        // eslint-disable-next-line no-console
+        console.error({ error });
       }
     }}
   >
@@ -61,7 +62,7 @@ const SubscribeForm = ({ className }: SubscribeFormProps) => (
           text="Subscribe"
           type="submit"
           isLoading={isSubmitting}
-          className="shadow shadow-[rgba(243,_205,_194,_0.5)] self-start"
+          className="shadow shadow-[rgba(243,_205,_194,_0.5)] md:self-start"
         />
       </Form>
     )}
