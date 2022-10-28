@@ -31,7 +31,7 @@ const Button = ({
           "border-border-gray-300 border bg-white text-grey-700":
             variant === "outline",
           "border border-transparent text-gray-700": variant === "link",
-          [className as string]: !!className,
+          [className!]: !!className,
         },
       )}
       type={type === "submit" ? "submit" : "button"}

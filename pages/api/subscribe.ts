@@ -14,13 +14,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    await mailchimp.lists.addListMember(
-      process.env.MAILCHIMP_AUDIENCE_ID as string,
-      {
-        email_address: email,
-        status: "subscribed",
-      },
-    );
+    await mailchimp.lists.addListMember(process.env.MAILCHIMP_AUDIENCE_ID!, {
+      email_address: email,
+      status: "subscribed",
+    });
 
     return res.json({ result: "success" });
   } catch (error) {

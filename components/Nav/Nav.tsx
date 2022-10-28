@@ -5,10 +5,10 @@ const NAV_ITEMS = [
     url: "/",
     label: "Home",
   },
-  // {
-  //   url: "/about",
-  //   label: "About",
-  // },
+  {
+    url: "/about",
+    label: "About",
+  },
   // {
   //   url: "/blog",
   //   label: "Blog",

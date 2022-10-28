@@ -1,7 +1,6 @@
 import Link from "next/link";
 import BuyGuideButton from "../BuyGuideButton/BuyGuideButton";
 import LogoText from "../LogoText/LogoText";
-// import BuyGuideButton from "../BuyGuideButton/BuyGuideButton";
 import Nav from "../Nav/Nav";
 
 const Header = () => (

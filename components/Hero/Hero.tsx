@@ -10,7 +10,7 @@ const Hero = ({ className }: HeroProps) => (
     className={clsx(
       "flex relative p-8 bg-[rgba(243,_205,_194,_0.5)] h-full md:bg-hero bg-no-repeat bg-right-top bg-contain",
       {
-        [className as string]: !!className,
+        [className!]: !!className,
       },
     )}
   >

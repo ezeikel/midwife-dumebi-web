@@ -67,7 +67,7 @@ const Footer = () => (
                   name={icon.name}
                   type={icon.type}
                   size={icon.size}
-                  color="#FFFFFF"
+                  className="text-white"
                 />
               </a>
             </li>

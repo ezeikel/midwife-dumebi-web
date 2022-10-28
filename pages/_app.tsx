@@ -3,7 +3,6 @@ import "react-toastify/dist/ReactToastify.minimal.css";
 import "animate.css";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { library, config } from "@fortawesome/fontawesome-svg-core";
 import { faEnvelope } from "@fortawesome/pro-light-svg-icons";
 import { faSpinnerThird } from "@fortawesome/pro-duotone-svg-icons";
 import {
@@ -13,6 +12,9 @@ import {
   faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons";
 import Page from "../components/Page/Page";
+
+// FIX: https://github.com/FortAwesome/Font-Awesome/issues/19348#issuecomment-1262137893
+const { library, config } = require("@fortawesome/fontawesome-svg-core");
 
 config.autoAddCss = false; /* eslint-disable import/first */
 

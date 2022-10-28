@@ -34,13 +34,13 @@ const TextInput = ({
   return (
     <div
       className={clsx("flex flex-col flex-1", {
-        [className as string]: !!className,
+        [className!]: !!className,
       })}
     >
       {label ? (
         <label
           className={clsx("flex font-catamaran mb-2", {
-            [labelClasses as string]: !!labelClasses,
+            [labelClasses!]: !!labelClasses,
           })}
           htmlFor="name"
         >
@@ -51,7 +51,7 @@ const TextInput = ({
         className={clsx(
           "w-full rounded border font-catamaran border-gray-300 p-4 outline-none active:border-peach focus:border-peach disabled:active:border-gray-300 placeholder:text-gray-300 ",
           {
-            [inputClasses as string]: !!inputClasses,
+            [inputClasses!]: !!inputClasses,
           },
         )}
         ref={inputEl}

@@ -21,52 +21,54 @@ type SubscribeFormProps = {
   className?: string;
 };
 
-const SubscribeForm = ({ className }: SubscribeFormProps) => (
-  <Formik
-    initialValues={{ email: "" }}
-    validationSchema={SubscribeSchema}
-    validateOnBlur={false}
-    validateOnChange={false}
-    onSubmit={async ({ email }, { resetForm }) => {
-      try {
-        // send to mailchimp
-        await axios.post("/api/subscribe", { email });
+const SubscribeForm = ({ className }: SubscribeFormProps) => {
+  return (
+    <Formik
+      initialValues={{ email: "" }}
+      validationSchema={SubscribeSchema}
+      validateOnBlur={false}
+      validateOnChange={false}
+      onSubmit={async ({ email }, { resetForm }) => {
+        try {
+          // send to mailchimp
+          await axios.post("/api/subscribe", { email });
 
-        resetForm();
+          resetForm();
 
-        // show success toast
-        toast("You have succesfully subscribed.", { transition: bounce });
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error({ error });
-      }
-    }}
-  >
-    {({ isSubmitting, handleSubmit }) => (
-      <Form
-        onSubmit={handleSubmit}
-        className={clsx(
-          "flex flex-col md:flex-row w-full gap-y-4 md:gap-x-4 md:gap-y-0",
-          {
-            [className as string]: !!className,
-          },
-        )}
-      >
-        <TextInput
-          type="email"
-          name="email"
-          placeholder="hi@midwifedumebi.com"
-          inputClasses="shadow shadow-[rgba(243,_205,_194,_0.5)]"
-        />
-        <Button
-          text="Subscribe"
-          type="submit"
-          isLoading={isSubmitting}
-          className="shadow shadow-[rgba(243,_205,_194,_0.5)] md:self-start"
-        />
-      </Form>
-    )}
-  </Formik>
-);
+          // show success toast
+          toast("You have succesfully subscribed.", { transition: bounce });
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error({ error });
+        }
+      }}
+    >
+      {({ isSubmitting, handleSubmit }) => (
+        <Form
+          onSubmit={handleSubmit}
+          className={clsx(
+            "flex flex-col md:flex-row w-full gap-y-4 md:gap-x-4 md:gap-y-0",
+            {
+              [className!]: !!className,
+            },
+          )}
+        >
+          <TextInput
+            type="email"
+            name="email"
+            placeholder="hi@midwifedumebi.com"
+            inputClasses="shadow shadow-[rgba(243,_205,_194,_0.5)]"
+          />
+          <Button
+            text="Subscribe"
+            type="submit"
+            isLoading={isSubmitting}
+            className="shadow shadow-[rgba(243,_205,_194,_0.5)] md:self-start"
+          />
+        </Form>
+      )}
+    </Formik>
+  );
+};
 
 export default SubscribeForm;
