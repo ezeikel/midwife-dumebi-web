@@ -20,8 +20,8 @@ const Nav = () => (
     <ul className="flex gap-x-4 items-center">
       {NAV_ITEMS.map(({ url, label }) => (
         <li key={url}>
-          <Link href={url}>
-            <a className="text-gray-900 font-catamaran text-xl">{label}</a>
+          <Link href={url} className="text-gray-900 font-catamaran text-xl">
+            {label}
           </Link>
         </li>
       ))}

@@ -1,4 +1,4 @@
-import Image from "next/future/image";
+import Image from "next/image";
 
 const AboutPage = () => (
   <div className="flex-1 flex flex-col items-center p-8 gap-8">
