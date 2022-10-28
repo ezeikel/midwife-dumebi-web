@@ -42,7 +42,7 @@ const BuyGuideButton = ({ className }: BuyGuideButtonProps) => {
     });
 
     if (error) {
-      console.warn("Error:", error);
+      console.error("Error:", error);
       setLoading(false);
     }
   };

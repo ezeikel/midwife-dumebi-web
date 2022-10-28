@@ -8,6 +8,7 @@ module.exports = {
   rules: {
     "react/react-in-jsx-scope": 0,
     "react/state-in-constructor": 0,
+    "no-console": [2, { allow: ["warn", "error"] }],
     "react/function-component-definition": 0,
     "react/prop-types": 0,
     "react/require-default-props": 0,

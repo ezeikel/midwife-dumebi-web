@@ -38,7 +38,6 @@ const SubscribeForm = ({ className }: SubscribeFormProps) => {
           // show success toast
           toast("You have succesfully subscribed.", { transition: bounce });
         } catch (error) {
-          // eslint-disable-next-line no-console
           console.error({ error });
         }
       }}
