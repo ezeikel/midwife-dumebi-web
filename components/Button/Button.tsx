@@ -2,7 +2,7 @@ import { MouseEvent as ReactMouseEvent } from "react";
 import clsx from "clsx";
 import Icon from "../Icon/Icon";
 
-type ButtonProps = {
+export type ButtonProps = {
   text: string;
   onClick?: (event: ReactMouseEvent<HTMLButtonElement, MouseEvent>) => void;
   className?: string;
