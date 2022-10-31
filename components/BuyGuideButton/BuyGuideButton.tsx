@@ -6,7 +6,7 @@ import Button from "../Button/Button";
 let stripePromise: Promise<Stripe | null>;
 const getStripe = () => {
   if (!stripePromise) {
-    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!); // TODO: check what ! does here? - fixed possibly undefined issue
+    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!); // TODO: check what ! does here? - fixed possibly undefined issue
   }
   return stripePromise;
 };
@@ -26,7 +26,7 @@ const BuyGuideButton = ({ className }: BuyGuideButtonProps) => {
 
     // redirect to checkout
     const stripe = await getStripe();
-    const { error } = await stripe!.redirectToCheckout({
+    const result = await stripe!.redirectToCheckout({
       mode: "payment",
       lineItems: [
         {
@@ -41,8 +41,8 @@ const BuyGuideButton = ({ className }: BuyGuideButtonProps) => {
       cancelUrl: process.env.NEXT_PUBLIC_FRONTEND_URL!,
     });
 
-    if (error) {
-      console.error("Error:", error);
+    if (result.error) {
+      console.error("Error:", result.error);
       setLoading(false);
     }
   };
