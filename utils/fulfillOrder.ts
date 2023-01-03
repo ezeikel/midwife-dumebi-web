@@ -45,7 +45,8 @@ export default async (session: any) => {
     emailInfo.attachments = [
       {
         filename: "The_Birth_Plan_Assist.pdf",
-        path: "https://raw.githubusercontent.com/ezeikel/midwife-dumebi-web/main/public/pdf/birth-plan-assist-2021.pdf",
+        href: "https://midwife-dumebi.s3.eu-west-2.amazonaws.com/birth-plan-assist-2021.pdf",
+        contentType: "application/pdf",
       },
     ];
   } else {
