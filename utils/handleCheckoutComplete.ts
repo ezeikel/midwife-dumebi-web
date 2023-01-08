@@ -8,6 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export default async (session: any) => {
+  // TODO: handle multiple line items
   const { data } = await stripe.checkout.sessions.listLineItems(session.id, {
     limit: 5,
   });
@@ -22,6 +23,7 @@ export default async (session: any) => {
   };
 
   // the birth plan assist (test and live id)
+  // TODO: must be a way to lookup the product id from the database or stripe instead of hardcoding it
   if (product === "prod_JO9ivAiDnrzmBC" || product === "prod_JOThgfTfydSS2o") {
     const message = `
       Hello ${session.customer_details.name},
@@ -39,12 +41,14 @@ export default async (session: any) => {
 
       https://midwifedumebi.com
     `;
+
     emailInfo.subject = "The Birth Plan Assist";
     emailInfo.html = createEmail(message);
     emailInfo.text = message;
     emailInfo.attachments = [
       {
         filename: "The_Birth_Plan_Assist.pdf",
+        // TODO: get link from db
         href: "https://midwife-dumebi.s3.eu-west-2.amazonaws.com/birth-plan-assist-2021.pdf",
         contentType: "application/pdf",
       },
@@ -57,7 +61,10 @@ export default async (session: any) => {
   }
 
   try {
+    // send email
     await transport.sendMail(emailInfo);
+
+    // return success message
     return { message: "Email sent" };
   } catch (error) {
     return { error };

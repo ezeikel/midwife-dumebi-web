@@ -14,8 +14,8 @@ const AboutPage = () => (
         <h3 className="text-4xl font-bennet-banner mb-4">Dumebi</h3>
         <div className="flex flex-col gap-4">
           <p>
-            Hello, my name is Dumebi Pemberton and I am the founder of Black
-            Midwifery. I am a registered midwife in the UK and a mother to two
+            Hello, my name is Dumebi Pemberton and I am the founder of Midwife
+            Dumebi. I am a registered midwife in the UK and a mother to two
             amazing young children.
           </p>
           <p>
@@ -45,12 +45,12 @@ const AboutPage = () => (
           <p>
             I have always been passionate about women&apos;s health and consider
             myself a champion for women&apos;s and maternal health which
-            initiated me to start Black Midwifery&apos;s Instagram page.
+            initiated me to start Midwife Dumebi&apos;s Instagram page.
           </p>
         </div>
       </section>
       <section>
-        <h3 className="text-4xl font-bennet-banner mb-4">Black Midwifery</h3>
+        <h3 className="text-4xl font-bennet-banner mb-4">Midwife Dumebi</h3>
         <div className="flex flex-col gap-4">
           <p>
             I created this platform in January 2020 to provide maternal health
@@ -62,7 +62,7 @@ const AboutPage = () => (
             representation of Black Women. In my first pregnancy, I researched a
             lot of pregnancy blogs, pregnancy IG pages and even pregnancy and
             birth apps and I felt they lacked in showing representation of black
-            women and families. Black Midwifery is here to make a difference!
+            women and families. Midwife Dumebi is here to make a difference!
           </p>
         </div>
       </section>

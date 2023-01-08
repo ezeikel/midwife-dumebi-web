@@ -1,12 +1,12 @@
 import Link from "next/link";
 import BuyGuideButton from "../BuyGuideButton/BuyGuideButton";
-import LogoText from "../LogoText/LogoText";
 import Nav from "../Nav/Nav";
+import LogoFull from "../svgs/LogoFull";
 
 const Header = () => (
   <header className="flex flex-wrap justify-between items-center p-8 gap-4">
     <Link href="/">
-      <LogoText className="text-gray-900" />
+      <LogoFull className="w-[146px] h-[50px]" />
     </Link>
     <Nav />
     <BuyGuideButton />

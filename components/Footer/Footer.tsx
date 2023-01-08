@@ -5,7 +5,7 @@ import {
 } from "@fortawesome/fontawesome-svg-core";
 import SubscribeForm from "../forms/SubscribeForm/SubscribeForm";
 import Icon from "../Icon/Icon";
-import LogoText from "../LogoText/LogoText";
+import LogoFull from "../svgs/LogoFull";
 
 type SocialLink = {
   url: string;
@@ -53,7 +53,10 @@ const SOCIAL_LINKS: SocialLink[] = [
 
 const Footer = () => (
   <footer className="flex flex-col items-center p-8 bg-[#333333]">
-    <LogoText className="text-white md:self-start mb-16" />
+    <LogoFull
+      className="w-[146px] h-[50px] fill-white md:self-start mb-16"
+      fill="#FFFFFF"
+    />
     <div className="flex flex-col  md:flex-row md:items-center md:justify-between md:gap-x-8 w-full mb-16">
       <div className="flex flex-col items-center md:items-start md:flex-none">
         <h4 className="text-white font-catamaran text-2xl mb-4">
