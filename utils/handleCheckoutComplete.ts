@@ -13,11 +13,10 @@ export default async (session: any) => {
     limit: 5,
   });
 
-  const {
-    price: { product },
-  } = data[0];
+  const { price } = data[0];
+  const product = price?.product;
 
-  const emailInfo = {
+  const emailInfo: any = {
     from: "hi@midwifedumebi.com",
     to: session.customer_details.email,
   };

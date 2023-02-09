@@ -14,11 +14,11 @@ export const config = {
 };
 
 // Stripe CLI webhook secret for testing your endpoint locally.
-const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
+const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET as string;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const rawBody = await getRawBody(req);
-  const signature = req.headers["stripe-signature"];
+  const signature = req.headers["stripe-signature"] as string;
 
   let event;
 
