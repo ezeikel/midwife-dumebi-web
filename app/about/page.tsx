@@ -45,7 +45,7 @@ const AboutPage = () => {
             <div className="relative order-2 lg:order-1">
               <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-xl">
                 <img
-                  src="/professional-black-female-midwife-portrait-warm-li.jpg"
+                  src="/images/dumebi.png"
                   alt="Midwife Dumebi - professional portrait"
                   className="object-cover w-full h-full"
                 />
