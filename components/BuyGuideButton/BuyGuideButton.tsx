@@ -1,15 +1,6 @@
 import { useState, MouseEvent as ReactMouseEvent } from "react";
-import { Stripe, loadStripe } from "@stripe/stripe-js";
 import clsx from "clsx";
 import Button from "../Button/Button";
-
-let stripePromise: Promise<Stripe | null>;
-const getStripe = () => {
-  if (!stripePromise) {
-    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!); // TODO: check what ! does here? - fixed possibly undefined issue
-  }
-  return stripePromise;
-};
 
 type BuyGuideButtonProps = {
   className?: string;
@@ -24,25 +15,24 @@ const BuyGuideButton = ({ className }: BuyGuideButtonProps) => {
     event.preventDefault();
     setLoading(true);
 
-    // redirect to checkout
-    const stripe = await getStripe();
-    const result = await stripe!.redirectToCheckout({
-      mode: "payment",
-      lineItems: [
-        {
-          price:
-            process.env.NODE_ENV === "production"
-              ? "price_1IlgkBA5obl98iViK9CguaQr"
-              : "price_1IlNPIA5obl98iViOBypvOWy",
-          quantity: 1,
+    try {
+      const response = await fetch("/api/payment/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      ],
-      successUrl: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/purchase-success`,
-      cancelUrl: process.env.NEXT_PUBLIC_FRONTEND_URL!,
-    });
+      });
 
-    if (result.error) {
-      console.error("Error:", result.error);
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error("Error:", data.error);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error:", error);
       setLoading(false);
     }
   };

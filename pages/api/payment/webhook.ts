@@ -3,9 +3,7 @@ import Stripe from "stripe";
 import getRawBody from "raw-body";
 import handleCheckoutComplete from "../../../utils/handleCheckoutComplete";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2022-08-01",
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export const config = {
   api: {

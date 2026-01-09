@@ -25,8 +25,7 @@ const Page = ({ children }: PageProps) => {
           pauseOnHover
           autoClose={3000}
           className="m-4 z-10 p-0 fixed bottom-0 right-0 left-0 transition-all"
-          toastClassName="flex justify-center p-4 bg-green-500 rounded transition-all"
-          bodyClassName="text-center text-white font-catamaran p-0"
+          toastClassName="flex justify-center p-4 bg-green-500 rounded transition-all text-center text-white font-catamaran"
         />
       </div>
     </>

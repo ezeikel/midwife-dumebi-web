@@ -1,3 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --font-catamaran: "catamaran", sans-serif;
+  --font-bennet-banner: "bennet-banner", sans-serif;
+  --background-image-hero: url("/images/black-woman-pregnant.svg");
+  --color-peach: #E69882;
+}

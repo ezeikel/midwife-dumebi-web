@@ -1,5 +1,5 @@
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import "react-toastify/dist/ReactToastify.minimal.css";
+import "react-toastify/dist/ReactToastify.css";
 import "animate.css";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";

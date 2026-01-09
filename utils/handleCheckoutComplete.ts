@@ -3,9 +3,7 @@
 import Stripe from "stripe";
 import { transport, createEmail } from "./mail";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2022-08-01",
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export default async (session: any) => {
   // TODO: handle multiple line items
