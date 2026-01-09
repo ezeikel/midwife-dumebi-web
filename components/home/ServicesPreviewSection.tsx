@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { services, type Service } from "@/lib/services"
 import CalAvailabilityPicker from "@/components/booking/CalAvailabilityPicker"
 
-const featuredServices = services.slice(0, 4)
+const featuredServices = services.filter((s) => s.type !== "digital").slice(0, 4)
 
 const ServicesPreviewSection = () => {
   const [selectedService, setSelectedService] = useState<Service | null>(null)
