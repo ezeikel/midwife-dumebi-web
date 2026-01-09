@@ -73,7 +73,18 @@ const CheckoutContent = ({ service }: CheckoutContentProps) => {
                 <p className="text-sm text-text-secondary leading-relaxed">{service.description}</p>
               </div>
 
-              {selectedDate && selectedTime && (
+              {service.type === "digital" ? (
+                <div className="py-6 border-b border-border">
+                  <h4 className="text-sm font-semibold text-text-primary mb-3">Delivery:</h4>
+                  <div className="flex items-center gap-3 p-3 bg-sage/10 rounded-lg">
+                    <FontAwesomeIcon icon={faCheck} className="text-sage" />
+                    <div>
+                      <p className="text-sm font-medium text-text-primary">Instant digital download</p>
+                      <p className="text-xs text-text-secondary">Access immediately after payment</p>
+                    </div>
+                  </div>
+                </div>
+              ) : selectedDate && selectedTime ? (
                 <div className="py-6 border-b border-border">
                   <h4 className="text-sm font-semibold text-text-primary mb-3">Selected time:</h4>
                   <div className="flex items-center gap-3 p-3 bg-blush/10 rounded-lg">
@@ -89,7 +100,7 @@ const CheckoutContent = ({ service }: CheckoutContentProps) => {
                       : "Your booking will be confirmed after payment."}
                   </p>
                 </div>
-              )}
+              ) : null}
 
               {/* What's included */}
               <div className="py-6 border-b border-border">
@@ -122,10 +133,12 @@ const CheckoutContent = ({ service }: CheckoutContentProps) => {
                   <FontAwesomeIcon icon={faShieldHalved} className="text-sage" />
                   <span>Secure payment via Stripe</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm text-text-secondary">
-                  <FontAwesomeIcon icon={faVideo} className="text-sage" />
-                  <span>Session delivered via Zoom</span>
-                </div>
+                {service.type !== "digital" && (
+                  <div className="flex items-center gap-3 text-sm text-text-secondary">
+                    <FontAwesomeIcon icon={faVideo} className="text-sage" />
+                    <span>Session delivered via Zoom</span>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
@@ -141,9 +154,11 @@ const CheckoutContent = ({ service }: CheckoutContentProps) => {
               <div className="p-6 border-b border-border">
                 <h1 className="font-serif text-2xl font-semibold text-text-primary">Complete your purchase</h1>
                 <p className="mt-2 text-text-secondary">
-                  {selectedDate && selectedTime
-                    ? "Your booking will be confirmed after payment."
-                    : "After payment, you'll be able to book your session time."}
+                  {service.type === "digital"
+                    ? "You'll receive instant access after payment."
+                    : selectedDate && selectedTime
+                      ? "Your booking will be confirmed after payment."
+                      : "After payment, you'll be able to book your session time."}
                 </p>
               </div>
               <div className="p-6">

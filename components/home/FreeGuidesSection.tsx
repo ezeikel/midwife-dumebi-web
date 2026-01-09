@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faDownload, faSpinner, faCheck, faBook } from "@fortawesome/free-solid-svg-icons"
@@ -189,15 +190,18 @@ const FreeGuidesSection = () => {
           className="mt-12 max-w-3xl mx-auto"
         >
           <div className="bg-blush/20 rounded-2xl p-6 md:p-8 border border-blush/30 text-center">
+            <div className="inline-block px-3 py-1 bg-rose/10 text-rose rounded-full text-sm font-medium mb-4">
+              Only £0.99
+            </div>
             <h3 className="font-serif text-xl md:text-2xl font-semibold text-text-primary mb-2">Birth Plan Assist</h3>
             <p className="text-text-secondary mb-6 max-w-xl mx-auto">
               A comprehensive digital guide to help you create a thoughtful, personalised birth plan. Includes
               templates, prompts, and expert guidance.
             </p>
             <Button asChild className="bg-rose hover:bg-terracotta text-white rounded-full px-8">
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                Learn more
-              </a>
+              <Link href="/checkout/birth-plan-assist">
+                Get it now
+              </Link>
             </Button>
           </div>
         </motion.div>

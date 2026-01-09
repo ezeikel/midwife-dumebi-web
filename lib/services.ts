@@ -8,12 +8,35 @@ export type Service = {
   priceDisplay: string
   description: string
   features: string[]
-  type: "session" | "package"
-  calLink: string // Placeholder Cal.com link
+  type: "session" | "package" | "digital"
+  calLink: string // Placeholder Cal.com link (empty for digital products)
+  calEventTypeId?: string // Cal.com event type ID for API booking
   included?: string[] // For packages
+  stripePriceId?: string // Optional Stripe price ID
 }
 
 export const services: Service[] = [
+  // Digital Products
+  {
+    id: "birth-plan-assist",
+    slug: "birth-plan-assist",
+    title: "Birth Plan Assist",
+    duration: "Digital guide",
+    durationMinutes: 0,
+    price: 99,
+    priceDisplay: "£0.99",
+    description:
+      "A comprehensive digital guide to help you create a thoughtful, personalised birth plan. Includes templates, prompts, and expert guidance.",
+    features: [
+      "Step-by-step birth planning framework",
+      "Customisable birth preferences template",
+      "Questions to discuss with your care team",
+      "Digital download - instant access",
+    ],
+    type: "digital",
+    calLink: "",
+    stripePriceId: "price_1IlNPIA5obl98iViOBypvOWy",
+  },
   // Individual Sessions
   {
     id: "plan-your-birth",
@@ -35,6 +58,7 @@ export const services: Service[] = [
     ],
     type: "session",
     calLink: "https://cal.com/midwifedumebi/plan-your-birth",
+    calEventTypeId: "4355842",
   },
   {
     id: "nhs-decisions",
@@ -54,6 +78,7 @@ export const services: Service[] = [
     ],
     type: "session",
     calLink: "https://cal.com/midwifedumebi/nhs-decisions",
+    calEventTypeId: "4355846",
   },
   {
     id: "maternity-notes",
@@ -72,6 +97,7 @@ export const services: Service[] = [
     ],
     type: "session",
     calLink: "https://cal.com/midwifedumebi/maternity-notes",
+    calEventTypeId: "4355853",
   },
   {
     id: "birth-experience",
@@ -91,6 +117,7 @@ export const services: Service[] = [
     ],
     type: "session",
     calLink: "https://cal.com/midwifedumebi/birth-experience",
+    calEventTypeId: "4355854",
   },
   {
     id: "birth-reflections",
@@ -109,6 +136,7 @@ export const services: Service[] = [
     ],
     type: "session",
     calLink: "https://cal.com/midwifedumebi/birth-reflections",
+    calEventTypeId: "4355855",
   },
   {
     id: "pregnancy-loss-debrief",
@@ -129,6 +157,7 @@ export const services: Service[] = [
     ],
     type: "session",
     calLink: "https://cal.com/midwifedumebi/pregnancy-loss-debrief",
+    calEventTypeId: "4355856",
   },
   // Packages
   {
@@ -152,6 +181,7 @@ export const services: Service[] = [
     ],
     type: "package",
     calLink: "https://cal.com/midwifedumebi/informed-birth-package",
+    calEventTypeId: "4355863",
   },
   {
     id: "postnatal-clarity-package",
@@ -172,6 +202,7 @@ export const services: Service[] = [
     ],
     type: "package",
     calLink: "https://cal.com/midwifedumebi/postnatal-clarity-package",
+    calEventTypeId: "4355864",
   },
   {
     id: "pregnancy-loss-support-package",
@@ -194,6 +225,7 @@ export const services: Service[] = [
     ],
     type: "package",
     calLink: "https://cal.com/midwifedumebi/pregnancy-loss-package",
+    calEventTypeId: "4355865",
   },
 ]
 

@@ -13,7 +13,7 @@ export const verifyStripeSession = async (sessionId: string) => {
       return null
     }
 
-    const serviceId = session.metadata?.service_id
+    const serviceId = session.metadata?.serviceId
     if (!serviceId) {
       return null
     }
@@ -27,9 +27,9 @@ export const verifyStripeSession = async (sessionId: string) => {
       service,
       customerEmail: session.customer_details?.email || "",
       customerName: session.customer_details?.name || "",
-      bookingDate: session.metadata?.booking_date || undefined,
-      bookingTime: session.metadata?.booking_time || undefined,
-      bookingDatetime: session.metadata?.booking_datetime || undefined,
+      bookingDate: session.metadata?.date || undefined,
+      bookingTime: session.metadata?.time || undefined,
+      bookingDatetime: session.metadata?.datetime || undefined,
     }
   } catch (error) {
     console.error("Error retrieving Stripe session:", error)

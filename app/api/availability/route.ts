@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { services } from "@/lib/services"
+import { getAvailability, transformAvailability } from "@/lib/cal"
 
 type TimeSlot = {
   time: string
@@ -11,7 +12,7 @@ type AvailabilityResponse = {
   [date: string]: TimeSlot[]
 }
 
-// Helper to generate time slots for a given date
+// Helper to generate time slots for a given date (mock fallback)
 const generateTimeSlotsForDate = (date: Date, serviceDuration: number): TimeSlot[] => {
   const slots: TimeSlot[] = []
   const dayOfWeek = date.getDay()
@@ -37,7 +38,6 @@ const generateTimeSlotsForDate = (date: Date, serviceDuration: number): TimeSlot
       if (slotDate <= new Date()) continue
 
       // Randomly make some slots unavailable (simulating booked slots)
-      // In production, this would come from Cal.com API
       const isAvailable = Math.random() > 0.3
 
       const timeString = slotDate.toLocaleTimeString("en-GB", {
@@ -69,6 +69,27 @@ const parseDuration = (durationStr: string): number => {
   return 60 // default 1 hour
 }
 
+// Generate mock availability for development
+const generateMockAvailability = (
+  startDate: string,
+  endDate: string,
+  serviceDuration: number
+): AvailabilityResponse => {
+  const availability: AvailabilityResponse = {}
+  const start = new Date(startDate)
+  const end = new Date(endDate)
+
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const dateKey = d.toISOString().split("T")[0]
+    const slots = generateTimeSlotsForDate(new Date(d), serviceDuration)
+    if (slots.length > 0) {
+      availability[dateKey] = slots
+    }
+  }
+
+  return availability
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const serviceSlug = searchParams.get("serviceSlug")
@@ -85,25 +106,40 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Service not found" }, { status: 404 })
   }
 
-  const duration = parseDuration(item.duration)
-  const availability: AvailabilityResponse = {}
+  // Use Cal.com API if configured and service has an event type ID
+  if (process.env.CAL_API_KEY && item.calEventTypeId) {
+    try {
+      const calAvailability = await getAvailability(item.calEventTypeId, startDate, endDate)
+      const transformed = transformAvailability(calAvailability)
 
-  // Generate availability for each date in range
-  const start = new Date(startDate)
-  const end = new Date(endDate)
+      // Convert to the expected response format
+      const availability: AvailabilityResponse = {}
+      for (const day of transformed) {
+        availability[day.date] = day.slots.map((slot) => {
+          // Create datetime from date and time
+          const [hours, minutes] = slot.time.split(":")
+          const datetime = new Date(day.date)
+          datetime.setHours(parseInt(hours), parseInt(minutes), 0, 0)
 
-  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    const dateKey = d.toISOString().split("T")[0]
-    const slots = generateTimeSlotsForDate(new Date(d), duration)
-    if (slots.length > 0) {
-      availability[dateKey] = slots
+          return {
+            time: slot.time,
+            datetime: datetime.toISOString(),
+            available: slot.available,
+          }
+        })
+      }
+
+      return NextResponse.json(availability)
+    } catch (error) {
+      console.error("Cal.com API error, falling back to mock data:", error)
+      // Fall back to mock data on error
     }
   }
 
-  // TODO: In production, call Cal.com API:
-  // const calResponse = await fetch(`https://api.cal.com/v1/availability?...`, {
-  //   headers: { Authorization: `Bearer ${process.env.CAL_API_KEY}` }
-  // })
+  // Fallback: Generate mock availability for development
+  console.log("Using mock availability data (CAL_API_KEY not configured or no calEventTypeId)")
+  const duration = parseDuration(item.duration)
+  const availability = generateMockAvailability(startDate, endDate, duration)
 
   return NextResponse.json(availability)
 }

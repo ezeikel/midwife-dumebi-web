@@ -9,7 +9,10 @@ type BookingSlot = {
   datetime: string | null
 }
 
-export const startCheckoutSession = async (serviceId: string, bookingSlot?: BookingSlot): Promise<string> => {
+export const startCheckoutSession = async (
+  serviceId: string,
+  bookingSlot?: BookingSlot
+): Promise<string> => {
   const service = getServiceById(serviceId)
 
   if (!service) {
@@ -22,18 +25,27 @@ export const startCheckoutSession = async (serviceId: string, bookingSlot?: Book
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000"
 
+  // Metadata keys must match what the webhook handler expects
   const metadata: Record<string, string> = {
-    service_id: service.id,
-    service_slug: service.slug,
-    cal_link: service.calLink,
+    serviceId: service.id,
+    serviceSlug: service.slug,
+    serviceType: service.type,
   }
 
-  if (bookingSlot?.date) metadata.booking_date = bookingSlot.date
-  if (bookingSlot?.time) metadata.booking_time = bookingSlot.time
-  if (bookingSlot?.datetime) metadata.booking_datetime = bookingSlot.datetime
+  // Add booking information if provided
+  if (bookingSlot?.date) metadata.date = bookingSlot.date
+  if (bookingSlot?.time) metadata.time = bookingSlot.time
+  if (bookingSlot?.datetime) metadata.datetime = bookingSlot.datetime
+
+  // Determine success URL based on service type
+  const successUrl =
+    service.type === "digital"
+      ? `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`
+      : `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`
 
   const session = await stripe.checkout.sessions.create({
     ui_mode: "embedded",
+    customer_creation: "always", // Ensure we always have customer details for emails
     line_items: [
       {
         price_data: {
@@ -44,11 +56,6 @@ export const startCheckoutSession = async (serviceId: string, bookingSlot?: Book
               bookingSlot?.date && bookingSlot?.time
                 ? `${service.description} • Scheduled for ${bookingSlot.date} at ${bookingSlot.time}`
                 : service.description,
-            metadata: {
-              service_id: service.id,
-              service_slug: service.slug,
-              cal_link: service.calLink,
-            },
           },
           unit_amount: service.price,
         },
@@ -56,7 +63,7 @@ export const startCheckoutSession = async (serviceId: string, bookingSlot?: Book
       },
     ],
     mode: "payment",
-    return_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+    return_url: successUrl,
     metadata,
   })
 
