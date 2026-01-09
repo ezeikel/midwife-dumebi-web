@@ -68,7 +68,7 @@ const HeroSection = () => {
           >
             <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl">
               <img
-                src="/pregnant-woman-peaceful-maternity-photo-warm-light.jpg"
+                src="/images/pexels-cottonbro-5857822.JPG"
                 alt="Midwife Dumebi providing supportive care"
                 className="object-cover w-full h-full"
               />
