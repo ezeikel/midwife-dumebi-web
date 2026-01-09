@@ -7,9 +7,15 @@ import BookingConfirmationEmail, {
 import PurchaseConfirmationEmail, {
   type PurchaseConfirmationEmailProps,
 } from "@/emails/PurchaseConfirmationEmail"
+import NewBookingNotificationEmail, {
+  type NewBookingNotificationEmailProps,
+} from "@/emails/NewBookingNotificationEmail"
 
 const isProduction = process.env.NODE_ENV === "production"
-const FROM_EMAIL = "Midwife Dumebi <bookings@midwifedumebi.com>"
+const FROM_EMAIL = "Midwife Dumebi <notifications@midwifedumebi.com>"
+
+// Admin email addresses to notify on new bookings
+const ADMIN_EMAILS = ["dumebiokure@gmail.com", "hi@midwifedumebi.com"]
 
 // Lazy initialization to avoid build-time errors
 let _resend: Resend | null = null
@@ -115,4 +121,25 @@ export async function sendPurchaseConfirmation(
     html,
     react: emailComponent,
   })
+}
+
+/**
+ * Send admin notification emails when a new booking is made
+ */
+export async function sendAdminBookingNotification(data: NewBookingNotificationEmailProps) {
+  const emailComponent = NewBookingNotificationEmail(data)
+  const html = await render(emailComponent)
+
+  const results = await Promise.all(
+    ADMIN_EMAILS.map((email) =>
+      sendEmail({
+        to: email,
+        subject: `New Booking: ${data.serviceName} - ${data.customerName}`,
+        html,
+        react: emailComponent,
+      })
+    )
+  )
+
+  return results
 }

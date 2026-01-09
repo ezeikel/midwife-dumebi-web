@@ -3,7 +3,17 @@ import { stripe } from "@/lib/stripe"
 import type Stripe from "stripe"
 import { getServiceById } from "@/lib/services"
 import { createBooking } from "@/lib/cal"
-import { sendBookingConfirmation, sendPurchaseConfirmation } from "@/lib/email"
+import {
+  sendBookingConfirmation,
+  sendPurchaseConfirmation,
+  sendAdminBookingNotification,
+} from "@/lib/email"
+import {
+  createCalendarEventData,
+  generateGoogleCalendarUrl,
+  generateOutlookCalendarUrl,
+  generateICSDownloadUrl,
+} from "@/lib/calendar"
 
 const webhookSecret = process.env.STRIPE_ENDPOINT_SECRET
 
@@ -81,8 +91,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         notes: `Paid via Stripe. Session ID: ${session.id}`,
       })
 
-      zoomLink = booking.metadata?.videoCallUrl
-      console.log("Cal.com booking created:", booking.uid)
+      zoomLink = booking.meetingUrl || booking.location
+      console.log("Cal.com booking created:", booking.uid, "Zoom link:", zoomLink)
     } catch (error) {
       console.error("Failed to create Cal.com booking:", error)
       // Continue to send email even if Cal.com booking fails
@@ -92,28 +102,65 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     console.log("Cal.com not configured - booking not created automatically")
   }
 
-  // Send booking confirmation email
+  // Generate calendar event data for email links
+  const durationMinutes = service.duration ? parseInt(service.duration) : 60
+  const calendarEvent = createCalendarEventData({
+    serviceName: service.title,
+    startTime: bookingDatetime,
+    durationMinutes,
+    zoomLink,
+  })
+
+  const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "https://midwifedumebi.com"
+  const googleCalendarUrl = generateGoogleCalendarUrl(calendarEvent)
+  const outlookCalendarUrl = generateOutlookCalendarUrl(calendarEvent)
+  const icsDownloadUrl = generateICSDownloadUrl(baseUrl, calendarEvent)
+
+  const formattedDate = bookingDate || new Date(bookingDatetime).toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  })
+  const formattedTime = bookingTime || new Date(bookingDatetime).toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+
+  // Send booking confirmation email to customer
   try {
     await sendBookingConfirmation({
       to: customerEmail,
       customerName,
       serviceName: service.title,
-      date: bookingDate || new Date(bookingDatetime).toLocaleDateString("en-GB", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-      time: bookingTime || new Date(bookingDatetime).toLocaleTimeString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      date: formattedDate,
+      time: formattedTime,
       duration: service.duration,
       zoomLink,
+      googleCalendarUrl,
+      outlookCalendarUrl,
+      icsDownloadUrl,
     })
     console.log("Booking confirmation email sent")
   } catch (error) {
     console.error("Failed to send booking confirmation email:", error)
+  }
+
+  // Send notification to admin (Dumebi)
+  try {
+    await sendAdminBookingNotification({
+      customerName,
+      customerEmail,
+      serviceName: service.title,
+      date: formattedDate,
+      time: formattedTime,
+      duration: service.duration,
+      amountPaid: session.amount_total || 0,
+      zoomLink,
+    })
+    console.log("Admin booking notification sent")
+  } catch (error) {
+    console.error("Failed to send admin notification:", error)
   }
 }
 

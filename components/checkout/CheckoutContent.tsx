@@ -136,7 +136,7 @@ const CheckoutContent = ({ service }: CheckoutContentProps) => {
                 {service.type !== "digital" && (
                   <div className="flex items-center gap-3 text-sm text-text-secondary">
                     <FontAwesomeIcon icon={faVideo} className="text-sage" />
-                    <span>Session delivered via Zoom</span>
+                    <span>Session delivered via video call</span>
                   </div>
                 )}
               </div>

@@ -73,7 +73,7 @@ const AboutPage = () => {
                 difficult experience, I&apos;m here to support you.
               </p>
               <p className="mt-4 text-text-secondary leading-relaxed">
-                I offer non-clinical support sessions via Zoom, providing a calm, professional space where you can ask
+                I offer non-clinical support sessions via video call, providing a calm, professional space where you can ask
                 questions, explore your choices, and feel truly heard.
               </p>
               <div className="mt-8">

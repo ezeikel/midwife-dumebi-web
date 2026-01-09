@@ -18,7 +18,7 @@ const steps = [
   {
     icon: faVideo,
     title: "Book instantly",
-    description: "Choose a time that works for you and meet via Zoom from the comfort of your home.",
+    description: "Choose a time that works for you and join via video call from the comfort of your home.",
   },
 ]
 

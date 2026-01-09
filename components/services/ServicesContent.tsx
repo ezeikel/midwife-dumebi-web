@@ -29,7 +29,7 @@ const ServicesContent = () => {
         >
           <h1 className="font-serif text-4xl md:text-5xl font-semibold text-text-primary">Services</h1>
           <p className="mt-4 text-text-secondary text-lg">
-            Choose the support that&apos;s right for you. All sessions are delivered online via Zoom.
+            Choose the support that&apos;s right for you. All sessions are delivered online via video call.
           </p>
         </motion.div>
 

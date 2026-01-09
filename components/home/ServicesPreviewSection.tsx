@@ -35,7 +35,7 @@ const ServicesPreviewSection = () => {
           >
             <h2 className="font-serif text-3xl md:text-4xl font-semibold text-text-primary">Services</h2>
             <p className="mt-4 text-text-secondary">
-              Choose the support that&apos;s right for you. All sessions are delivered online via Zoom.
+              Choose the support that&apos;s right for you. All sessions are delivered online via video call.
             </p>
           </motion.div>
 

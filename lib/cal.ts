@@ -15,6 +15,8 @@ export type CalBookingResponse = {
   startTime: string
   endTime: string
   attendees: { email: string; name: string }[]
+  meetingUrl?: string
+  location?: string
   metadata?: {
     videoCallUrl?: string
   }

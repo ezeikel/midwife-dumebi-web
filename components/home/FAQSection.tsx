@@ -12,9 +12,9 @@ const faqs = [
       "Non-clinical support means I provide education, emotional support, and guidance to help you understand your options and feel more confident. I do not provide medical advice, diagnose conditions, or replace your clinical care team. Think of it as having a knowledgeable friend who can help you navigate the system and advocate for yourself.",
   },
   {
-    question: "How do Zoom sessions work?",
+    question: "How do video sessions work?",
     answer:
-      "After booking, you'll receive a Zoom link via email. At your appointment time, simply click the link to join our video call. You can use Zoom on your computer, tablet, or phone. I recommend finding a quiet, comfortable space where you can speak freely.",
+      "After booking, you'll receive a video call link via email. At your appointment time, simply click the link to join our call. You can join from your computer, tablet, or phone. I recommend finding a quiet, comfortable space where you can speak freely.",
   },
   {
     question: "What's your cancellation and reschedule policy?",
@@ -44,7 +44,7 @@ const faqs = [
   {
     question: "What happens after I pay?",
     answer:
-      "After payment, you'll be directed to book your session time using our online calendar. Choose a slot that works for you, and you'll receive a confirmation email with your Zoom link and any preparation tips. It's that simple!",
+      "After payment, you'll be directed to book your session time using our online calendar. Choose a slot that works for you, and you'll receive a confirmation email with your video call link and any preparation tips. It's that simple!",
   },
 ]
 

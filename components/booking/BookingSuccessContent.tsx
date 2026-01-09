@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -13,11 +13,18 @@ import {
   faSpinner,
   faArrowRight,
   faCircleXmark,
+  faCalendarPlus,
 } from "@fortawesome/free-solid-svg-icons"
 import { Button } from "@/components/ui/button"
 import { verifyStripeSession } from "@/app/actions/verify-session"
 import CalEmbed from "@/components/booking/CalEmbed"
 import type { Service } from "@/lib/services"
+import {
+  createCalendarEventData,
+  generateGoogleCalendarUrl,
+  generateOutlookCalendarUrl,
+  generateICSContent,
+} from "@/lib/calendar"
 
 type SessionData = {
   service: Service
@@ -61,6 +68,39 @@ const BookingSuccessContent = () => {
   }, [sessionId])
 
   const hasPreBookedSlot = sessionData?.bookingDate && sessionData?.bookingTime
+
+  // Generate calendar event data when we have a booking
+  const calendarEvent = useMemo(() => {
+    if (!hasPreBookedSlot || !sessionData?.bookingDatetime || !sessionData?.service) {
+      return null
+    }
+
+    const durationMinutes = sessionData.service.duration
+      ? parseInt(sessionData.service.duration)
+      : 60
+
+    return createCalendarEventData({
+      serviceName: sessionData.service.title,
+      startTime: sessionData.bookingDatetime,
+      durationMinutes,
+      // Zoom link will be added when Cal.com integration is configured
+    })
+  }, [hasPreBookedSlot, sessionData])
+
+  const handleDownloadICS = () => {
+    if (!calendarEvent) return
+
+    const icsContent = generateICSContent(calendarEvent)
+    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = `${sessionData?.service.title.replace(/[^a-zA-Z0-9]/g, "-")}-booking.ics`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
 
   if (status === "loading") {
     return (
@@ -161,8 +201,42 @@ const BookingSuccessContent = () => {
                   </div>
                 </div>
                 <p className="text-sm text-text-secondary mt-3">
-                  You&apos;ll receive a confirmation email with your Zoom link shortly.
+                  You&apos;ll receive a confirmation email with your video call link shortly.
                 </p>
+
+                {/* Add to Calendar buttons */}
+                {calendarEvent && (
+                  <div className="mt-4">
+                    <p className="text-sm font-medium text-text-primary mb-3 flex items-center gap-2">
+                      <FontAwesomeIcon icon={faCalendarPlus} className="text-rose" />
+                      Add to your calendar
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <a
+                        href={generateGoogleCalendarUrl(calendarEvent)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-border rounded-full text-sm font-medium text-text-primary hover:bg-blush/10 hover:border-rose/30 transition-colors"
+                      >
+                        Google Calendar
+                      </a>
+                      <a
+                        href={generateOutlookCalendarUrl(calendarEvent)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-border rounded-full text-sm font-medium text-text-primary hover:bg-blush/10 hover:border-rose/30 transition-colors"
+                      >
+                        Outlook
+                      </a>
+                      <button
+                        onClick={handleDownloadICS}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-border rounded-full text-sm font-medium text-text-primary hover:bg-blush/10 hover:border-rose/30 transition-colors"
+                      >
+                        Apple Calendar (.ics)
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -187,7 +261,7 @@ const BookingSuccessContent = () => {
                   <div>
                     <p className="font-medium text-text-primary">Confirmation email</p>
                     <p className="text-sm text-text-secondary">
-                      You&apos;ll receive an email with your Zoom link and details.
+                      You&apos;ll receive an email with your video call link and details.
                     </p>
                   </div>
                 </div>
@@ -196,8 +270,8 @@ const BookingSuccessContent = () => {
                     <FontAwesomeIcon icon={faVideo} size="sm" />
                   </div>
                   <div>
-                    <p className="font-medium text-text-primary">Meet on Zoom</p>
-                    <p className="text-sm text-text-secondary">Join the video call at your scheduled time.</p>
+                    <p className="font-medium text-text-primary">Join your video call</p>
+                    <p className="text-sm text-text-secondary">Click the link in your email at your scheduled time.</p>
                   </div>
                 </div>
               </div>
@@ -215,7 +289,7 @@ const BookingSuccessContent = () => {
               <div className="p-6 md:p-8 border-b border-border">
                 <h2 className="font-serif text-xl font-semibold text-text-primary mb-2">Book your session</h2>
                 <p className="text-text-secondary">
-                  Select a date and time below. You&apos;ll receive a confirmation email with your Zoom link.
+                  Select a date and time below. You&apos;ll receive a confirmation email with your video call link.
                 </p>
               </div>
 

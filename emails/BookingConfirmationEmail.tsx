@@ -19,6 +19,9 @@ export type BookingConfirmationEmailProps = {
   time: string
   duration: string
   zoomLink?: string
+  googleCalendarUrl?: string
+  outlookCalendarUrl?: string
+  icsDownloadUrl?: string
 }
 
 const main = {
@@ -108,6 +111,38 @@ const logo = {
   display: "block",
 }
 
+const calendarSection = {
+  backgroundColor: "#f5f5f5",
+  borderRadius: "8px",
+  padding: "20px",
+  margin: "24px 0",
+  textAlign: "center" as const,
+}
+
+const calendarTitle = {
+  color: "#2a1e1a",
+  fontSize: "14px",
+  fontWeight: "600",
+  margin: "0 0 16px",
+}
+
+const calendarButtonsContainer = {
+  textAlign: "center" as const,
+}
+
+const calendarButton = {
+  backgroundColor: "#ffffff",
+  border: "1px solid #e7d9cc",
+  borderRadius: "20px",
+  color: "#2a1e1a",
+  fontSize: "13px",
+  fontWeight: "500",
+  textDecoration: "none",
+  padding: "10px 16px",
+  margin: "4px",
+  display: "inline-block",
+}
+
 export default function BookingConfirmationEmail({
   customerName,
   serviceName,
@@ -115,7 +150,11 @@ export default function BookingConfirmationEmail({
   time,
   duration,
   zoomLink,
+  googleCalendarUrl,
+  outlookCalendarUrl,
+  icsDownloadUrl,
 }: BookingConfirmationEmailProps) {
+  const hasCalendarLinks = googleCalendarUrl || outlookCalendarUrl || icsDownloadUrl
   return (
     <Html>
       <Head />
@@ -171,14 +210,37 @@ export default function BookingConfirmationEmail({
 
           {zoomLink && (
             <>
-              <Text style={text}>Your session will take place via Zoom:</Text>
+              <Text style={text}>Your session will take place via video call:</Text>
               <Link href={zoomLink} style={buttonStyle}>
-                Join Zoom Meeting
+                Join Video Call
               </Link>
               <Text style={{ ...text, fontSize: "14px", color: "#6b5b53" }}>
                 Or copy this link: {zoomLink}
               </Text>
             </>
+          )}
+
+          {hasCalendarLinks && (
+            <Section style={calendarSection}>
+              <Text style={calendarTitle}>Add to your calendar:</Text>
+              <div style={calendarButtonsContainer}>
+                {googleCalendarUrl && (
+                  <Link href={googleCalendarUrl} style={calendarButton}>
+                    Google Calendar
+                  </Link>
+                )}
+                {outlookCalendarUrl && (
+                  <Link href={outlookCalendarUrl} style={calendarButton}>
+                    Outlook
+                  </Link>
+                )}
+                {icsDownloadUrl && (
+                  <Link href={icsDownloadUrl} style={calendarButton}>
+                    Apple Calendar (.ics)
+                  </Link>
+                )}
+              </div>
+            </Section>
           )}
 
           <Hr style={hr} />

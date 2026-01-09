@@ -41,9 +41,9 @@ const faqCategories = [
     title: "Sessions & Booking",
     faqs: [
       {
-        question: "How do Zoom sessions work?",
+        question: "How do video sessions work?",
         answer:
-          "After booking, you'll receive a Zoom link via email. At your appointment time, simply click the link to join our video call. You can use Zoom on your computer, tablet, or phone. I recommend finding a quiet, comfortable space where you can speak freely.",
+          "After booking, you'll receive a video call link via email. At your appointment time, simply click the link to join our call. You can join from your computer, tablet, or phone. I recommend finding a quiet, comfortable space where you can speak freely.",
       },
       {
         question: "Can my partner join the session?",
@@ -53,7 +53,7 @@ const faqCategories = [
       {
         question: "What happens after I pay?",
         answer:
-          "After payment, you'll be directed to book your session time using our online calendar. Choose a slot that works for you, and you'll receive a confirmation email with your Zoom link and any preparation tips. It's that simple!",
+          "After payment, you'll be directed to book your session time using our online calendar. Choose a slot that works for you, and you'll receive a confirmation email with your video call link and any preparation tips. It's that simple!",
       },
       {
         question: "What's your cancellation and reschedule policy?",
