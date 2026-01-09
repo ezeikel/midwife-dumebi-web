@@ -83,7 +83,7 @@ const BookingSuccessContent = () => {
       serviceName: sessionData.service.title,
       startTime: sessionData.bookingDatetime,
       durationMinutes,
-      // Zoom link will be added when Cal.com integration is configured
+      // Video call link will be added when Cal.com integration is configured
     })
   }, [hasPreBookedSlot, sessionData])
 

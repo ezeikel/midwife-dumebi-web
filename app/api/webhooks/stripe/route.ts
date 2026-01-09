@@ -92,7 +92,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       })
 
       zoomLink = booking.meetingUrl || booking.location
-      console.log("Cal.com booking created:", booking.uid, "Zoom link:", zoomLink)
+      console.log("Cal.com booking created:", booking.uid, "Video call link:", zoomLink)
     } catch (error) {
       console.error("Failed to create Cal.com booking:", error)
       // Continue to send email even if Cal.com booking fails

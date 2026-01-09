@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     title,
     startTime: start,
     endTime: end,
-    location: location || "Online via Zoom",
+    location: location || "Online video call",
     description: description || "",
   })
 
