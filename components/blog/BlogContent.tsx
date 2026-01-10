@@ -1,39 +1,44 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { motion } from "framer-motion"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faMagnifyingGlass } from "@fortawesome/pro-solid-svg-icons"
-import { Input } from "@/components/ui/input"
-import { blogPosts, categories, getFeaturedPosts, type BlogCategory } from "@/lib/blog"
-import BlogCard from "@/components/blog/BlogCard"
-import FeaturedPost from "@/components/blog/FeaturedPost"
+import { useState, useMemo } from "react";
+import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMagnifyingGlass } from "@fortawesome/pro-solid-svg-icons";
+import { Input } from "@/components/ui/input";
+import { categories, type BlogCategory, type BlogPost } from "@/lib/blog";
+import BlogCard from "@/components/blog/BlogCard";
+import FeaturedPost from "@/components/blog/FeaturedPost";
 
-const BlogContent = () => {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [activeCategory, setActiveCategory] = useState<BlogCategory | "all">("all")
+type BlogContentProps = {
+  posts: BlogPost[];
+  featuredPosts: BlogPost[];
+};
 
-  const featuredPosts = getFeaturedPosts()
+const BlogContent = ({ posts, featuredPosts }: BlogContentProps) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState<BlogCategory | "all">(
+    "all"
+  );
 
   const filteredPosts = useMemo(() => {
-    let posts = blogPosts
+    let filtered = posts;
 
     if (activeCategory !== "all") {
-      posts = posts.filter((post) => post.category === activeCategory)
+      filtered = filtered.filter((post) => post.category === activeCategory);
     }
 
     if (searchQuery) {
-      const query = searchQuery.toLowerCase()
-      posts = posts.filter(
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
         (post) =>
           post.title.toLowerCase().includes(query) ||
           post.excerpt.toLowerCase().includes(query) ||
-          post.categoryLabel.toLowerCase().includes(query),
-      )
+          post.categoryLabel.toLowerCase().includes(query)
+      );
     }
 
-    return posts
-  }, [activeCategory, searchQuery])
+    return filtered;
+  }, [posts, activeCategory, searchQuery]);
 
   return (
     <>
@@ -46,9 +51,12 @@ const BlogContent = () => {
             transition={{ duration: 0.5 }}
             className="text-center max-w-2xl mx-auto"
           >
-            <h1 className="font-serif text-4xl md:text-5xl font-semibold text-text-primary">Blog</h1>
+            <h1 className="font-serif text-4xl md:text-5xl font-semibold text-text-primary">
+              Blog
+            </h1>
             <p className="mt-4 text-lg text-text-secondary">
-              Articles, guides, and resources to support you on your pregnancy journey.
+              Articles, guides, and resources to support you on your pregnancy
+              journey.
             </p>
           </motion.div>
         </div>
@@ -118,7 +126,11 @@ const BlogContent = () => {
           <div className="max-w-6xl mx-auto">
             {filteredPosts.length === 0 ? (
               <div className="text-center py-16">
-                <p className="text-text-secondary">No articles found matching your search.</p>
+                <p className="text-text-secondary">
+                  {posts.length === 0
+                    ? "No articles yet. Check back soon!"
+                    : "No articles found matching your search."}
+                </p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -131,7 +143,7 @@ const BlogContent = () => {
         </div>
       </section>
     </>
-  )
-}
+  );
+};
 
-export default BlogContent
+export default BlogContent;

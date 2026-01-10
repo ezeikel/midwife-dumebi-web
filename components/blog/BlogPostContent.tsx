@@ -1,26 +1,104 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faArrowLeft, faClock, faShareNodes, faLink, faEnvelope } from "@fortawesome/pro-solid-svg-icons"
-import { faTwitter, faFacebookF, faLinkedinIn } from "@fortawesome/free-brands-svg-icons"
-import { blogPosts, type BlogPost } from "@/lib/blog"
-import CTAStrip from "@/components/CTAStrip"
-import BlogCard from "@/components/blog/BlogCard"
+import Link from "next/link";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowLeft,
+  faClock,
+  faShareNodes,
+  faLink,
+  faEnvelope,
+} from "@fortawesome/pro-solid-svg-icons";
+import {
+  faTwitter,
+  faFacebookF,
+  faLinkedinIn,
+} from "@fortawesome/free-brands-svg-icons";
+import {
+  PortableText,
+  PortableTextReactComponents,
+} from "@portabletext/react";
+import { type BlogPost } from "@/lib/blog";
+import CTAStrip from "@/components/CTAStrip";
+import BlogCard from "@/components/blog/BlogCard";
 
 type BlogPostContentProps = {
-  post: BlogPost
-}
+  post: BlogPost;
+  relatedPosts?: BlogPost[];
+};
 
-const BlogPostContent = ({ post }: BlogPostContentProps) => {
-  const relatedPosts = blogPosts.filter((p) => p.slug !== post.slug && p.category === post.category).slice(0, 3)
+// Custom components for Portable Text rendering
+const portableTextComponents: Partial<PortableTextReactComponents> = {
+  block: {
+    h2: ({ children }) => (
+      <h2 className="font-serif text-2xl font-semibold text-text-primary mt-10 mb-4">
+        {children}
+      </h2>
+    ),
+    h3: ({ children }) => (
+      <h3 className="font-serif text-xl font-semibold text-text-primary mt-8 mb-3">
+        {children}
+      </h3>
+    ),
+    h4: ({ children }) => (
+      <h4 className="font-serif text-lg font-semibold text-text-primary mt-6 mb-2">
+        {children}
+      </h4>
+    ),
+    normal: ({ children }) => (
+      <p className="text-text-secondary leading-relaxed mb-4">{children}</p>
+    ),
+    blockquote: ({ children }) => (
+      <blockquote className="border-l-4 border-sage pl-4 my-6 italic text-text-secondary">
+        {children}
+      </blockquote>
+    ),
+  },
+  marks: {
+    strong: ({ children }) => (
+      <strong className="font-semibold text-text-primary">{children}</strong>
+    ),
+    em: ({ children }) => <em>{children}</em>,
+    link: ({ children, value }) => (
+      <a
+        href={value?.href}
+        target={value?.blank ? "_blank" : undefined}
+        rel={value?.blank ? "noopener noreferrer" : undefined}
+        className="text-rose hover:underline"
+      >
+        {children}
+      </a>
+    ),
+  },
+  list: {
+    bullet: ({ children }) => (
+      <ul className="list-disc list-outside pl-6 text-text-secondary space-y-2 mb-4">
+        {children}
+      </ul>
+    ),
+    number: ({ children }) => (
+      <ol className="list-decimal list-outside pl-6 text-text-secondary space-y-2 mb-4">
+        {children}
+      </ol>
+    ),
+  },
+  listItem: {
+    bullet: ({ children }) => <li className="marker:text-sage">{children}</li>,
+    number: ({ children }) => <li className="marker:text-sage">{children}</li>,
+  },
+};
 
-  const shareUrl = typeof window !== "undefined" ? window.location.href : ""
+const BlogPostContent = ({ post, relatedPosts = [] }: BlogPostContentProps) => {
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
 
   const copyLink = () => {
-    navigator.clipboard.writeText(shareUrl)
-  }
+    navigator.clipboard.writeText(shareUrl);
+  };
+
+  // Check if we have Portable Text content or legacy markdown content
+  const hasPortableText = post.body && post.body.length > 0;
 
   return (
     <>
@@ -29,7 +107,11 @@ const BlogPostContent = ({ post }: BlogPostContentProps) => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             {/* Back link */}
-            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="mb-8">
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="mb-8"
+            >
               <Link
                 href="/blog"
                 className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-rose transition-colors"
@@ -39,17 +121,29 @@ const BlogPostContent = ({ post }: BlogPostContentProps) => {
               </Link>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <span className="text-sm font-medium text-sage">{post.categoryLabel}</span>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <span className="text-sm font-medium text-sage">
+                {post.categoryLabel}
+              </span>
 
               <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-semibold text-text-primary leading-tight mt-3 mb-6 text-balance">
                 {post.title}
               </h1>
 
               <div className="flex flex-wrap items-center gap-4 text-sm text-text-secondary">
-                <span className="font-medium text-text-primary">{post.author}</span>
+                <span className="font-medium text-text-primary">
+                  {post.author}
+                </span>
                 <span>•</span>
-                <span>{new Date(post.publishedAt).toLocaleDateString("en-GB", { dateStyle: "long" })}</span>
+                <span>
+                  {new Date(post.publishedAt).toLocaleDateString("en-GB", {
+                    dateStyle: "long",
+                  })}
+                </span>
                 <span>•</span>
                 <span className="flex items-center gap-1">
                   <FontAwesomeIcon icon={faClock} size="sm" />
@@ -61,6 +155,48 @@ const BlogPostContent = ({ post }: BlogPostContentProps) => {
         </div>
       </section>
 
+      {/* Featured image */}
+      {post.image && (
+        <section className="bg-background">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto -mt-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="relative aspect-video rounded-2xl overflow-hidden"
+              >
+                <Image
+                  src={post.image}
+                  alt={post.imageAlt || post.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </motion.div>
+              {post.imageCredit && (
+                <p className="text-xs text-text-secondary text-center mt-2">
+                  Photo by{" "}
+                  {post.imageCreditUrl ? (
+                    <a
+                      href={post.imageCreditUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-rose transition-colors"
+                    >
+                      {post.imageCredit}
+                    </a>
+                  ) : (
+                    post.imageCredit
+                  )}{" "}
+                  on Pexels
+                </p>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Article content */}
       <section className="py-12 md:py-16 bg-background">
         <div className="container mx-auto px-4">
@@ -69,16 +205,28 @@ const BlogPostContent = ({ post }: BlogPostContentProps) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="prose prose-lg max-w-none 
-                prose-headings:font-serif prose-headings:text-text-primary prose-headings:font-semibold
-                prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
-                prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-                prose-p:text-text-secondary prose-p:leading-relaxed
-                prose-strong:text-text-primary prose-strong:font-semibold
-                prose-ul:text-text-secondary prose-li:marker:text-sage
-                prose-a:text-rose prose-a:no-underline hover:prose-a:underline"
-              dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
-            />
+            >
+              {hasPortableText ? (
+                <PortableText
+                  value={post.body!}
+                  components={portableTextComponents}
+                />
+              ) : (
+                <div
+                  className="prose prose-lg max-w-none
+                    prose-headings:font-serif prose-headings:text-text-primary prose-headings:font-semibold
+                    prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
+                    prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+                    prose-p:text-text-secondary prose-p:leading-relaxed
+                    prose-strong:text-text-primary prose-strong:font-semibold
+                    prose-ul:text-text-secondary prose-li:marker:text-sage
+                    prose-a:text-rose prose-a:no-underline hover:prose-a:underline"
+                  dangerouslySetInnerHTML={{
+                    __html: formatContent(post.content),
+                  }}
+                />
+              )}
+            </motion.article>
 
             {/* Share buttons */}
             <div className="mt-12 pt-8 border-t border-border">
@@ -136,13 +284,26 @@ const BlogPostContent = ({ post }: BlogPostContentProps) => {
             {/* Author box */}
             <div className="mt-8 bg-surface rounded-2xl p-6 border border-border">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-blush/20 flex items-center justify-center text-rose font-serif font-semibold text-xl">
-                  MD
-                </div>
+                {post.authorImage ? (
+                  <Image
+                    src={post.authorImage}
+                    alt={post.author}
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-blush/20 flex items-center justify-center text-rose font-serif font-semibold text-xl">
+                    MD
+                  </div>
+                )}
                 <div>
-                  <h3 className="font-serif text-lg font-semibold text-text-primary">{post.author}</h3>
+                  <h3 className="font-serif text-lg font-semibold text-text-primary">
+                    {post.author}
+                  </h3>
                   <p className="text-sm text-text-secondary">
-                    NMC registered midwife and nurse with over 10 years NHS experience.
+                    {post.authorBio ||
+                      "NMC registered midwife and nurse with over 10 years NHS experience."}
                   </p>
                 </div>
               </div>
@@ -160,7 +321,11 @@ const BlogPostContent = ({ post }: BlogPostContentProps) => {
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {relatedPosts.map((relatedPost, index) => (
-                <BlogCard key={relatedPost.slug} post={relatedPost} index={index} />
+                <BlogCard
+                  key={relatedPost.slug}
+                  post={relatedPost}
+                  index={index}
+                />
               ))}
             </div>
           </div>
@@ -169,10 +334,10 @@ const BlogPostContent = ({ post }: BlogPostContentProps) => {
 
       <CTAStrip />
     </>
-  )
-}
+  );
+};
 
-// Simple markdown-like formatting
+// Simple markdown-like formatting for legacy content
 const formatContent = (content: string): string => {
   return content
     .replace(/## (.*)/g, "<h2>$1</h2>")
@@ -189,10 +354,10 @@ const formatContent = (content: string): string => {
         match.startsWith("</") ||
         match.trim() === ""
       ) {
-        return match
+        return match;
       }
-      return `<p>${match}</p>`
-    })
-}
+      return `<p>${match}</p>`;
+    });
+};
 
-export default BlogPostContent
+export default BlogPostContent;
