@@ -1,5 +1,5 @@
 import type { Service } from "@/lib/services"
-import type { BlogPost } from "@/lib/blog"
+import type { BlogPost } from "@/lib/blog/types"
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.midwifedumebi.com"
 

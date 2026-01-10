@@ -20,7 +20,7 @@ import {
   PortableText,
   PortableTextReactComponents,
 } from "@portabletext/react";
-import { type BlogPost } from "@/lib/blog";
+import { type BlogPost } from "@/lib/blog/types";
 import CTAStrip from "@/components/CTAStrip";
 import BlogCard from "@/components/blog/BlogCard";
 

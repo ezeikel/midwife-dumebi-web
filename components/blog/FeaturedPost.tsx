@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faClock, faArrowRight } from "@fortawesome/pro-solid-svg-icons"
 import { Button } from "@/components/ui/button"
-import type { BlogPost } from "@/lib/blog"
+import type { BlogPost } from "@/lib/blog/types"
 
 type FeaturedPostProps = {
   post: BlogPost

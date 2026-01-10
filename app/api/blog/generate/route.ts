@@ -7,9 +7,6 @@ import {
 // Allow up to 5 minutes for blog generation
 export const maxDuration = 300;
 
-// Disable static generation for this route
-export const dynamic = "force-dynamic";
-
 /**
  * GET /api/blog/generate
  *

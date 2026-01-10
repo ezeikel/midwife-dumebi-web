@@ -1,8 +1,15 @@
 import Link from "next/link"
+import { cacheLife } from "next/cache"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faInstagram, faFacebookF, faTiktok, faLinkedinIn } from "@fortawesome/free-brands-svg-icons"
 import { faEnvelope } from "@fortawesome/pro-solid-svg-icons"
 import NewsletterForm from "@/components/NewsletterForm"
+
+const getCachedYear = async () => {
+  "use cache"
+  cacheLife("days")
+  return new Date().getFullYear()
+}
 
 const quickLinks = [
   { href: "/services", label: "Services" },
@@ -24,7 +31,9 @@ const socialLinks = [
   { href: "https://linkedin.com/in/midwifedumebi", icon: faLinkedinIn, label: "LinkedIn" },
 ]
 
-const Footer = () => {
+const Footer = async () => {
+  const year = await getCachedYear()
+
   return (
     <footer className="bg-section-alt border-t border-border">
       <div className="container mx-auto px-4 py-12 md:py-16">
@@ -108,7 +117,7 @@ const Footer = () => {
         {/* Copyright */}
         <div className="mt-6 text-center">
           <p className="text-xs text-text-secondary">
-            &copy; {new Date().getFullYear()} Midwife Dumebi. All rights reserved.
+            &copy; {year} Midwife Dumebi. All rights reserved.
           </p>
         </div>
       </div>

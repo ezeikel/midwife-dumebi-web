@@ -4,7 +4,7 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faClock } from "@fortawesome/pro-solid-svg-icons"
-import type { BlogPost } from "@/lib/blog"
+import type { BlogPost } from "@/lib/blog/types"
 
 type BlogCardProps = {
   post: BlogPost

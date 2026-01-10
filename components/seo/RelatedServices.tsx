@@ -2,7 +2,7 @@ import Link from "next/link"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faClock, faArrowRight } from "@fortawesome/pro-solid-svg-icons"
 import { services, type Service } from "@/lib/services"
-import { type BlogCategory } from "@/lib/blog"
+import { type BlogCategory } from "@/lib/blog/types"
 
 // Map blog categories to relevant service IDs
 const categoryToServices: Record<BlogCategory, string[]> = {

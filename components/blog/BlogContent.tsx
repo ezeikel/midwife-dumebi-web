@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/pro-solid-svg-icons";
 import { Input } from "@/components/ui/input";
-import { categories, type BlogCategory, type BlogPost } from "@/lib/blog";
+import { categories, type BlogCategory, type BlogPost } from "@/lib/blog/types";
 import BlogCard from "@/components/blog/BlogCard";
 import FeaturedPost from "@/components/blog/FeaturedPost";
 

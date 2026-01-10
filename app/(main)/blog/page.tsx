@@ -27,9 +27,6 @@ export const metadata: Metadata = {
   },
 };
 
-// Revalidate every hour to pick up new posts
-export const revalidate = 3600;
-
 const BlogPage = async () => {
   const [posts, featuredPosts] = await Promise.all([
     getAllPosts(),

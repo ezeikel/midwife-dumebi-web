@@ -1,10 +1,18 @@
+import { Suspense } from "react"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
-import { getServiceBySlug } from "@/lib/services"
+import { getServiceBySlug, services } from "@/lib/services"
 import CheckoutContent from "@/components/checkout/CheckoutContent"
+import Loading from "@/components/Loading"
 
 type CheckoutPageProps = {
   params: Promise<{ slug: string }>
+}
+
+export const generateStaticParams = () => {
+  return services.map((service) => ({
+    slug: service.slug,
+  }))
 }
 
 export const generateMetadata = async ({ params }: CheckoutPageProps): Promise<Metadata> => {
@@ -29,7 +37,11 @@ const CheckoutPage = async ({ params }: CheckoutPageProps) => {
     notFound()
   }
 
-  return <CheckoutContent service={service} />
+  return (
+    <Suspense fallback={<Loading />}>
+      <CheckoutContent service={service} />
+    </Suspense>
+  )
 }
 
 export default CheckoutPage

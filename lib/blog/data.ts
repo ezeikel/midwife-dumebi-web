@@ -1,3 +1,5 @@
+import "server-only";
+import { cacheLife, cacheTag } from "next/cache";
 import { client, isSanityConfigured } from "@/lib/sanity/client";
 import {
   postsQuery,
@@ -8,109 +10,12 @@ import {
   searchPostsQuery,
   relatedPostsQuery,
 } from "@/lib/sanity/queries";
-import { PortableTextBlock } from "@portabletext/react";
-
-// Types
-export type BlogCategory =
-  | "birth-planning"
-  | "nhs-support"
-  | "emotional-wellbeing"
-  | "postnatal"
-  | "resources"
-  | "pain-relief"
-  | "labour-and-birth"
-  | "breastfeeding-and-feeding"
-  | "baby-care";
-
-export type SanityAuthor = {
-  _id: string;
-  name: string;
-  slug: { current: string };
-  title?: string;
-  bio?: string;
-  image?: string;
-};
-
-export type SanityCategory = {
-  _id: string;
-  title: string;
-  slug: { current: string };
-  description?: string;
-  color?: string;
-};
-
-export type SanityImage = {
-  url: string;
-  alt: string;
-  credit?: string;
-  creditUrl?: string;
-};
-
-export type SanitySeo = {
-  metaTitle?: string;
-  metaDescription?: string;
-  keywords?: string[];
-};
-
-export type SanityGenerationMeta = {
-  topic?: string;
-  generatedAt?: string;
-  model?: string;
-  pexelsPhotoId?: string;
-};
-
-export type SanityPost = {
-  _id: string;
-  title: string;
-  slug: { current: string };
-  excerpt: string;
-  body?: PortableTextBlock[];
-  author: SanityAuthor;
-  category: SanityCategory;
-  featuredImage?: SanityImage;
-  publishedAt: string;
-  readingTime?: number;
-  featured?: boolean;
-  status?: string;
-  seo?: SanitySeo;
-  generationMeta?: SanityGenerationMeta;
-};
-
-// Legacy type for backward compatibility with existing components
-export type BlogPost = {
-  slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  category: BlogCategory;
-  categoryLabel: string;
-  author: string;
-  authorTitle?: string;
-  authorBio?: string;
-  authorImage?: string;
-  publishedAt: string;
-  readingTime: string;
-  featured: boolean;
-  image?: string;
-  imageAlt?: string;
-  imageCredit?: string;
-  imageCreditUrl?: string;
-  body?: PortableTextBlock[];
-  seo?: SanitySeo;
-};
-
-// Category configuration
-export const categories: { value: BlogCategory; label: string; color?: string }[] = [
-  { value: "birth-planning", label: "Birth Planning", color: "#E8B4B8" },
-  { value: "nhs-support", label: "NHS Support", color: "#A8C5B5" },
-  { value: "emotional-wellbeing", label: "Emotional Wellbeing", color: "#C5A8B8" },
-  { value: "postnatal", label: "Postnatal Care", color: "#C5B8A8" },
-  { value: "resources", label: "Resources", color: "#C5C5A8" },
-  { value: "pain-relief", label: "Pain Relief", color: "#D4A574" },
-  { value: "labour-and-birth", label: "Labour & Birth", color: "#B8A8C5" },
-  { value: "breastfeeding-and-feeding", label: "Breastfeeding & Feeding", color: "#A8C5C5" },
-  { value: "baby-care", label: "Baby Care", color: "#C5C5A8" },
-];
+import type {
+  BlogPost,
+  BlogCategory,
+  SanityPost,
+  SanityCategory,
+} from "./types";
 
 /**
  * Convert Sanity post to legacy BlogPost format for backward compatibility
@@ -140,9 +45,13 @@ function sanityPostToBlogPost(post: SanityPost): BlogPost {
 }
 
 /**
- * Get all blog posts
+ * Get all blog posts (cached)
  */
 export async function getAllPosts(): Promise<BlogPost[]> {
+  "use cache";
+  cacheLife("blog-list");
+  cacheTag("blog-posts");
+
   if (!isSanityConfigured) {
     console.warn("Sanity not configured. Set NEXT_PUBLIC_SANITY_PROJECT_ID to enable blog.");
     return [];
@@ -157,9 +66,13 @@ export async function getAllPosts(): Promise<BlogPost[]> {
 }
 
 /**
- * Get a single blog post by slug
+ * Get a single blog post by slug (cached)
  */
 export async function getBlogPost(slug: string): Promise<BlogPost | undefined> {
+  "use cache";
+  cacheLife("blog-post");
+  cacheTag("blog-posts", `blog-post-${slug}`);
+
   if (!isSanityConfigured) {
     return undefined;
   }
@@ -174,9 +87,13 @@ export async function getBlogPost(slug: string): Promise<BlogPost | undefined> {
 }
 
 /**
- * Get featured posts
+ * Get featured posts (cached)
  */
 export async function getFeaturedPosts(): Promise<BlogPost[]> {
+  "use cache";
+  cacheLife("blog-list");
+  cacheTag("blog-posts", "featured-posts");
+
   if (!isSanityConfigured) {
     return [];
   }
@@ -190,11 +107,15 @@ export async function getFeaturedPosts(): Promise<BlogPost[]> {
 }
 
 /**
- * Get posts by category
+ * Get posts by category (cached)
  */
 export async function getPostsByCategory(
   categorySlug: BlogCategory
 ): Promise<BlogPost[]> {
+  "use cache";
+  cacheLife("blog-list");
+  cacheTag("blog-posts", `blog-category-${categorySlug}`);
+
   if (!isSanityConfigured) {
     return [];
   }
@@ -210,7 +131,7 @@ export async function getPostsByCategory(
 }
 
 /**
- * Search posts
+ * Search posts (not cached - dynamic search queries)
  */
 export async function searchPosts(query: string): Promise<BlogPost[]> {
   if (!isSanityConfigured || !query || query.trim().length < 2) {
@@ -252,9 +173,13 @@ export async function getRelatedPosts(
 }
 
 /**
- * Get all categories
+ * Get all categories (cached)
  */
 export async function getCategories(): Promise<SanityCategory[]> {
+  "use cache";
+  cacheLife("blog-categories");
+  cacheTag("blog-categories");
+
   if (!isSanityConfigured) {
     return [];
   }
@@ -267,18 +192,17 @@ export async function getCategories(): Promise<SanityCategory[]> {
 }
 
 /**
- * Get all post slugs for static generation
+ * Get all post slugs for static generation (not cached - runs at build time)
  */
 export async function getAllPostSlugs(): Promise<string[]> {
+  if (!isSanityConfigured) {
+    return [];
+  }
   try {
-    const posts = await getAllPosts();
-    return posts.map((post) => post.slug);
+    const posts: SanityPost[] = await client.fetch(postsQuery);
+    return posts.map((post) => post.slug.current);
   } catch (error) {
     console.error("Error fetching post slugs from Sanity:", error);
     return [];
   }
 }
-
-// Legacy exports for backward compatibility (these were previously used as arrays)
-// Now they're empty and the async functions above should be used instead
-export const blogPosts: BlogPost[] = [];
