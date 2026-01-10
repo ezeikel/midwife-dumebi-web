@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faStar, faQuoteLeft } from "@fortawesome/free-solid-svg-icons"
+import { faStar, faQuoteLeft } from "@fortawesome/pro-solid-svg-icons"
 
 const testimonials = [
   {

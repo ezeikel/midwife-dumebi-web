@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons"
+import { faCircleInfo } from "@fortawesome/pro-solid-svg-icons"
 import { getSessions, getPackages } from "@/lib/services"
 import ServiceCard from "@/components/services/ServiceCard"
 import PackageCard from "@/components/services/PackageCard"

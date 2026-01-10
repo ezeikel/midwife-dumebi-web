@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faClock, faCheck, faCalendarDays, faGift, faXmark } from "@fortawesome/free-solid-svg-icons"
+import { faClock, faCheck, faCalendarDays, faGift, faXmark } from "@fortawesome/pro-solid-svg-icons"
 import { Button } from "@/components/ui/button"
 import CalAvailabilityPicker from "@/components/booking/CalAvailabilityPicker"
 import type { Service } from "@/lib/services"

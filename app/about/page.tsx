@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faHeart, faGraduationCap, faHandHoldingHeart, faUserNurse } from "@fortawesome/free-solid-svg-icons"
+import { faHeart, faGraduationCap, faHandHoldingHeart, faUserNurse } from "@fortawesome/pro-solid-svg-icons"
 import { Button } from "@/components/ui/button"
 import CTAStrip from "@/components/CTAStrip"
 

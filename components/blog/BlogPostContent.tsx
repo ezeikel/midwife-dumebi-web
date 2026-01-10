@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faArrowLeft, faClock, faShareNodes, faLink, faEnvelope } from "@fortawesome/free-solid-svg-icons"
+import { faArrowLeft, faClock, faShareNodes, faLink, faEnvelope } from "@fortawesome/pro-solid-svg-icons"
 import { faTwitter, faFacebookF, faLinkedinIn } from "@fortawesome/free-brands-svg-icons"
 import { blogPosts, type BlogPost } from "@/lib/blog"
 import CTAStrip from "@/components/CTAStrip"

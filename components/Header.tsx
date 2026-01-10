@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons"
+import { faBars, faXmark } from "@fortawesome/pro-solid-svg-icons"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 

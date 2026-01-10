@@ -10,11 +10,11 @@ import {
   faCalendarDays,
   faEnvelope,
   faVideo,
-  faSpinner,
   faArrowRight,
   faCircleXmark,
   faCalendarPlus,
-} from "@fortawesome/free-solid-svg-icons"
+} from "@fortawesome/pro-solid-svg-icons"
+import { faSpinnerThird } from "@fortawesome/pro-duotone-svg-icons"
 import { Button } from "@/components/ui/button"
 import { verifyStripeSession } from "@/app/actions/verify-session"
 import CalEmbed from "@/components/booking/CalEmbed"
@@ -106,7 +106,7 @@ const BookingSuccessContent = () => {
     return (
       <div className="min-h-screen bg-section-alt flex items-center justify-center">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
-          <FontAwesomeIcon icon={faSpinner} spin size="2x" className="text-rose mb-4" />
+          <FontAwesomeIcon icon={faSpinnerThird} spin size="2x" className="text-rose mb-4" />
           <p className="text-text-secondary">Confirming your purchase...</p>
         </motion.div>
       </div>

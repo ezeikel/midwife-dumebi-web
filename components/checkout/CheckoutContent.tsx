@@ -14,7 +14,7 @@ import {
   faShieldHalved,
   faVideo,
   faCalendarDays,
-} from "@fortawesome/free-solid-svg-icons"
+} from "@fortawesome/pro-solid-svg-icons"
 import { startCheckoutSession } from "@/app/actions/stripe"
 import type { Service } from "@/lib/services"
 

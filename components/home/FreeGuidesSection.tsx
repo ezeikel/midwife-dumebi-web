@@ -4,7 +4,8 @@ import { useState } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faDownload, faSpinner, faCheck, faBook, faExclamationCircle } from "@fortawesome/free-solid-svg-icons"
+import { faDownload, faCheck, faBook, faExclamationCircle } from "@fortawesome/pro-solid-svg-icons"
+import { faSpinnerThird } from "@fortawesome/pro-duotone-svg-icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -191,7 +192,7 @@ const FreeGuidesSection = () => {
                         >
                           {status === "loading" ? (
                             <>
-                              <FontAwesomeIcon icon={faSpinner} spin size="sm" className="mr-2" />
+                              <FontAwesomeIcon icon={faSpinnerThird} spin size="sm" className="mr-2" />
                               Sending...
                             </>
                           ) : (

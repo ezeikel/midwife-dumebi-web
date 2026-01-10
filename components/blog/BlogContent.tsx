@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons"
+import { faMagnifyingGlass } from "@fortawesome/pro-solid-svg-icons"
 import { Input } from "@/components/ui/input"
 import { blogPosts, categories, getFeaturedPosts, type BlogCategory } from "@/lib/blog"
 import BlogCard from "@/components/blog/BlogCard"

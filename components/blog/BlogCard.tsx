@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faClock } from "@fortawesome/free-solid-svg-icons"
+import { faClock } from "@fortawesome/pro-solid-svg-icons"
 import type { BlogPost } from "@/lib/blog"
 
 type BlogCardProps = {

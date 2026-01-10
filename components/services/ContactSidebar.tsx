@@ -5,7 +5,8 @@ import type React from "react"
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faSpinner, faCheck, faEnvelope } from "@fortawesome/free-solid-svg-icons"
+import { faCheck, faEnvelope } from "@fortawesome/pro-solid-svg-icons"
+import { faSpinnerThird } from "@fortawesome/pro-duotone-svg-icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -85,7 +86,7 @@ const ContactSidebar = () => {
         >
           {status === "loading" ? (
             <>
-              <FontAwesomeIcon icon={faSpinner} spin size="sm" className="mr-2" />
+              <FontAwesomeIcon icon={faSpinnerThird} spin size="sm" className="mr-2" />
               Sending...
             </>
           ) : (

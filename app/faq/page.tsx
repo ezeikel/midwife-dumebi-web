@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faEnvelope } from "@fortawesome/free-solid-svg-icons"
+import { faEnvelope } from "@fortawesome/pro-solid-svg-icons"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
 import CTAStrip from "@/components/CTAStrip"

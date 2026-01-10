@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons"
+import { faCircleInfo } from "@fortawesome/pro-solid-svg-icons"
 
 export const metadata: Metadata = {
   title: "Disclaimer",

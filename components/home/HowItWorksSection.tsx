@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faHandPointer, faCreditCard, faVideo } from "@fortawesome/free-solid-svg-icons"
+import { faHandPointer, faCreditCard, faVideo } from "@fortawesome/pro-solid-svg-icons"
 
 const steps = [
   {

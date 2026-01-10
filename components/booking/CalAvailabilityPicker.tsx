@@ -7,9 +7,9 @@ import {
   faChevronLeft,
   faChevronRight,
   faArrowRight,
-  faSpinner,
   faCalendarCheck,
-} from "@fortawesome/free-solid-svg-icons"
+} from "@fortawesome/pro-solid-svg-icons"
+import { faSpinnerThird } from "@fortawesome/pro-duotone-svg-icons"
 import { Button } from "@/components/ui/button"
 import type { Service } from "@/lib/services"
 import useSWR from "swr"
@@ -191,7 +191,7 @@ const CalAvailabilityPicker = ({ service, onSlotSelected }: CalAvailabilityPicke
         <div className="grid grid-cols-7 gap-1 relative">
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-background/80 rounded-lg z-10">
-              <FontAwesomeIcon icon={faSpinner} spin className="text-rose text-xl" />
+              <FontAwesomeIcon icon={faSpinnerThird} spin className="text-rose text-xl" />
             </div>
           )}
           {calendarDays.map((date, index) => {

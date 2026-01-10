@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faInstagram, faFacebookF, faTiktok } from "@fortawesome/free-brands-svg-icons"
-import { faEnvelope } from "@fortawesome/free-solid-svg-icons"
+import { faEnvelope } from "@fortawesome/pro-solid-svg-icons"
 import NewsletterForm from "@/components/NewsletterForm"
 
 const quickLinks = [

@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faHome, faArrowLeft } from "@fortawesome/free-solid-svg-icons"
+import { faHome, faArrowLeft } from "@fortawesome/pro-solid-svg-icons"
 import { Button } from "@/components/ui/button"
 
 const NotFound = () => {

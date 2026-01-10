@@ -5,7 +5,8 @@ import type React from "react"
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faSpinner, faCheck } from "@fortawesome/free-solid-svg-icons"
+import { faCheck } from "@fortawesome/pro-solid-svg-icons"
+import { faSpinnerThird } from "@fortawesome/pro-duotone-svg-icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -59,7 +60,7 @@ const NewsletterForm = ({ variant = "default", className }: NewsletterFormProps)
           className="flex-1 bg-surface border-border text-sm"
         />
         <Button type="submit" disabled={status === "loading"} className="bg-rose hover:bg-terracotta text-white">
-          {status === "loading" ? <FontAwesomeIcon icon={faSpinner} spin size="sm" /> : "Join"}
+          {status === "loading" ? <FontAwesomeIcon icon={faSpinnerThird} spin size="sm" /> : "Join"}
         </Button>
       </form>
     )
@@ -92,7 +93,7 @@ const NewsletterForm = ({ variant = "default", className }: NewsletterFormProps)
         >
           {status === "loading" ? (
             <>
-              <FontAwesomeIcon icon={faSpinner} spin size="sm" className="mr-2" />
+              <FontAwesomeIcon icon={faSpinnerThird} spin size="sm" className="mr-2" />
               Subscribing...
             </>
           ) : (
@@ -129,7 +130,7 @@ const NewsletterForm = ({ variant = "default", className }: NewsletterFormProps)
       >
         {status === "loading" ? (
           <>
-            <FontAwesomeIcon icon={faSpinner} spin size="sm" className="mr-2" />
+            <FontAwesomeIcon icon={faSpinnerThird} spin size="sm" className="mr-2" />
             Subscribing...
           </>
         ) : (
