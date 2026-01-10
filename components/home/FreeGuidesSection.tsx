@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faDownload, faSpinner, faCheck, faBook } from "@fortawesome/free-solid-svg-icons"
+import { faDownload, faSpinner, faCheck, faBook, faExclamationCircle } from "@fortawesome/free-solid-svg-icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -15,36 +15,47 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { getFreeGuides } from "@/lib/resources"
 
-const freeGuides = [
-  {
-    id: "birth-preferences",
-    title: "Birth Preferences Starter Guide",
-    description: "A simple framework to help you think about and communicate your birth preferences.",
-  },
-  {
-    id: "questions-to-ask",
-    title: "10 Questions to Ask Your Midwife",
-    description: "Essential questions to help you get the most from your antenatal appointments.",
-  },
-  {
-    id: "maternity-notes-glossary",
-    title: "Maternity Notes Glossary",
-    description: "A quick reference guide to common terms and abbreviations in your notes.",
-  },
-]
+const freeGuides = getFreeGuides()
 
 const FreeGuidesSection = () => {
   const [selectedGuide, setSelectedGuide] = useState<string | null>(null)
   const [email, setEmail] = useState("")
   const [name, setName] = useState("")
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle")
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const [errorMessage, setErrorMessage] = useState("")
 
   const handleDownload = async () => {
+    if (!selectedGuide) return
+
     setStatus("loading")
-    // Placeholder - connect to email provider
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setStatus("success")
+    setErrorMessage("")
+
+    try {
+      const response = await fetch("/api/guides/request", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          name,
+          guideId: selectedGuide,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Something went wrong")
+      }
+
+      setStatus("success")
+    } catch (error) {
+      setStatus("error")
+      setErrorMessage(error instanceof Error ? error.message : "Failed to send guide. Please try again.")
+    }
   }
 
   const resetForm = () => {
@@ -52,6 +63,7 @@ const FreeGuidesSection = () => {
     setEmail("")
     setName("")
     setSelectedGuide(null)
+    setErrorMessage("")
   }
 
   return (
@@ -124,6 +136,26 @@ const FreeGuidesSection = () => {
                         <p className="text-sm text-text-secondary">
                           We&apos;ve sent your guide to <strong>{email}</strong>
                         </p>
+                      </motion.div>
+                    ) : status === "error" ? (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="py-8 text-center"
+                      >
+                        <div className="w-16 h-16 rounded-full bg-rose/20 flex items-center justify-center text-rose mx-auto mb-4">
+                          <FontAwesomeIcon icon={faExclamationCircle} size="xl" />
+                        </div>
+                        <p className="font-serif text-lg font-semibold text-text-primary mb-2">Oops!</p>
+                        <p className="text-sm text-text-secondary mb-4">{errorMessage}</p>
+                        <Button
+                          onClick={() => setStatus("idle")}
+                          variant="outline"
+                          className="rounded-full"
+                        >
+                          Try again
+                        </Button>
                       </motion.div>
                     ) : (
                       <motion.form

@@ -10,6 +10,7 @@ import PurchaseConfirmationEmail, {
 import NewBookingNotificationEmail, {
   type NewBookingNotificationEmailProps,
 } from "@/emails/NewBookingNotificationEmail"
+import FreeGuideEmail, { type FreeGuideEmailProps } from "@/emails/FreeGuideEmail"
 
 const isProduction = process.env.NODE_ENV === "production"
 const FROM_EMAIL = "Midwife Dumebi <notifications@midwifedumebi.com>"
@@ -142,4 +143,57 @@ export async function sendAdminBookingNotification(data: NewBookingNotificationE
   )
 
   return results
+}
+
+/**
+ * Send a free guide download email
+ */
+export async function sendFreeGuideEmail(data: FreeGuideEmailProps & { to: string }) {
+  const { to, ...emailProps } = data
+
+  const emailComponent = FreeGuideEmail(emailProps)
+  const html = await render(emailComponent)
+
+  return sendEmail({
+    to,
+    subject: `Your Free Guide: ${emailProps.guideName}`,
+    html,
+    react: emailComponent,
+  })
+}
+
+/**
+ * Add a contact to Resend Audiences for marketing emails
+ */
+export async function addToResendAudience(email: string, firstName: string, lastName?: string) {
+  const audienceId = process.env.RESEND_AUDIENCE_ID
+
+  if (!isProduction) {
+    console.log("[DEV] Would add to Resend Audience:", { email, firstName, lastName, audienceId })
+    return { success: true, dev: true }
+  }
+
+  if (!audienceId) {
+    console.warn("RESEND_AUDIENCE_ID not configured, skipping audience add")
+    return { success: false, reason: "no_audience_id" }
+  }
+
+  try {
+    const resend = getResend()
+
+    const result = await resend.contacts.create({
+      audienceId,
+      email,
+      firstName,
+      lastName,
+      unsubscribed: false,
+    })
+
+    console.log("Added contact to Resend Audience:", { email, result })
+    return { success: true, data: result }
+  } catch (error) {
+    // Handle duplicate contact gracefully
+    console.error("Failed to add to Resend Audience:", error)
+    return { success: false, error }
+  }
 }

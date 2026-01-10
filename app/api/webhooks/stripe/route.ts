@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { stripe } from "@/lib/stripe"
 import type Stripe from "stripe"
 import { getServiceById } from "@/lib/services"
+import { getResourceById } from "@/lib/resources"
 import { createBooking } from "@/lib/cal"
 import {
   sendBookingConfirmation,
@@ -51,15 +52,23 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   // Handle digital products (no booking needed)
   if (service.type === "digital") {
+    // Validate the resource exists for download
+    const resource = getResourceById(service.id)
+    if (!resource) {
+      console.error("Digital resource not found in resources.ts:", service.id)
+    }
+
+    const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "https://midwifedumebi.com"
+    const downloadLink = `${baseUrl}/api/downloads/${service.id}?session=${session.id}`
+
     try {
       await sendPurchaseConfirmation({
         to: customerEmail,
         customerName,
         productName: service.title,
-        // TODO: Generate secure download link or use S3 presigned URL
-        downloadLink: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/downloads/${service.id}?session=${session.id}`,
+        downloadLink,
       })
-      console.log("Purchase confirmation email sent for digital product:", service.title)
+      console.log("Purchase confirmation email sent for digital product:", service.title, "Download link:", downloadLink)
     } catch (error) {
       console.error("Failed to send purchase confirmation email:", error)
     }
