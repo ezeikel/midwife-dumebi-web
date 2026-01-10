@@ -13,7 +13,7 @@ import NewBookingNotificationEmail, {
 import FreeGuideEmail, { type FreeGuideEmailProps } from "@/emails/FreeGuideEmail"
 
 const isProduction = process.env.NODE_ENV === "production"
-const FROM_EMAIL = "Midwife Dumebi <notifications@midwifedumebi.com>"
+const FROM_EMAIL = "Midwife Dumebi <noreply@notifications.midwifedumebi.com>"
 
 // Admin email addresses to notify on new bookings
 const ADMIN_EMAILS = ["dumebiokure@gmail.com", "hi@midwifedumebi.com"]
