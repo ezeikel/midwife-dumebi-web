@@ -1,9 +1,14 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.midwifedumebi.com"
+
 export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description: "Privacy Policy for Midwife Dumebi - how we collect, use, and protect your personal information.",
+  title: "Privacy Policy | Midwife Dumebi",
+  description: "Privacy Policy for Midwife Dumebi - how we collect, use, and protect your personal information under UK GDPR.",
+  alternates: {
+    canonical: `${baseUrl}/privacy`,
+  },
 }
 
 const PrivacyPage = () => {
@@ -94,8 +99,8 @@ const PrivacyPage = () => {
               <h2 className="font-serif text-2xl font-semibold text-text-primary mb-4">8. Contact</h2>
               <p className="text-text-secondary leading-relaxed">
                 For privacy-related enquiries or to exercise your rights, contact us at{" "}
-                <a href="mailto:hello@midwifedumebi.com" className="text-rose hover:underline">
-                  hello@midwifedumebi.com
+                <a href="mailto:hi@midwifedumebi.com" className="text-rose hover:underline">
+                  hi@midwifedumebi.com
                 </a>
               </p>
             </section>

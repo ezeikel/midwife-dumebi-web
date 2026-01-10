@@ -4,11 +4,30 @@ import { faEnvelope } from "@fortawesome/pro-solid-svg-icons"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
 import CTAStrip from "@/components/CTAStrip"
+import Breadcrumbs from "@/components/seo/Breadcrumbs"
+import { generateFAQSchema } from "@/lib/seo/json-ld"
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.midwifedumebi.com"
 
 export const metadata: Metadata = {
-  title: "FAQ",
+  title: "Frequently Asked Questions | Midwifery Support Services",
   description:
-    "Frequently asked questions about midwifery support services, booking, payments, and what to expect from your session.",
+    "Find answers to common questions about birth planning sessions, NHS maternity support, booking, payments, and what to expect from your midwife consultation.",
+  keywords: [
+    "midwife FAQ",
+    "birth planning questions",
+    "NHS maternity support questions",
+    "midwifery consultation FAQ",
+    "pregnancy support questions",
+  ],
+  alternates: {
+    canonical: `${baseUrl}/faq`,
+  },
+  openGraph: {
+    title: "Frequently Asked Questions | Midwife Dumebi",
+    description: "Find answers to common questions about birth planning sessions and midwifery support services.",
+    url: `${baseUrl}/faq`,
+  },
 }
 
 const faqCategories = [
@@ -110,11 +129,27 @@ const faqCategories = [
 ]
 
 const FAQPage = () => {
+  // Flatten all FAQs for schema
+  const allFaqs = faqCategories.flatMap((category) =>
+    category.faqs.map((faq) => ({
+      question: faq.question,
+      answer: faq.answer,
+    }))
+  )
+  const faqSchema = generateFAQSchema(allFaqs)
+
   return (
     <>
+      {/* FAQ Schema JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       {/* Header */}
       <section className="py-16 md:py-24 bg-section-alt">
         <div className="container mx-auto px-4">
+          <Breadcrumbs items={[{ label: "FAQ" }]} className="mb-8 max-w-2xl mx-auto" />
           <div className="text-center max-w-2xl mx-auto">
             <h1 className="font-serif text-4xl md:text-5xl font-semibold text-text-primary">
               Frequently Asked Questions
@@ -161,7 +196,7 @@ const FAQPage = () => {
                 I&apos;m happy to help. Send me an email and I&apos;ll get back to you within 24 hours.
               </p>
               <Button asChild className="bg-rose hover:bg-terracotta text-white rounded-full px-8">
-                <a href="mailto:hello@midwifedumebi.com">
+                <a href="mailto:hi@midwifedumebi.com">
                   <FontAwesomeIcon icon={faEnvelope} size="sm" className="mr-2" />
                   Email me
                 </a>

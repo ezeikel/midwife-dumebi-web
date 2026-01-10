@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faInstagram, faFacebookF, faTiktok } from "@fortawesome/free-brands-svg-icons"
+import { faInstagram, faFacebookF, faTiktok, faLinkedinIn } from "@fortawesome/free-brands-svg-icons"
 import { faEnvelope } from "@fortawesome/pro-solid-svg-icons"
 import NewsletterForm from "@/components/NewsletterForm"
 
@@ -21,6 +21,7 @@ const socialLinks = [
   { href: "https://instagram.com/midwifedumebi", icon: faInstagram, label: "Instagram" },
   { href: "https://tiktok.com/@midwifedumebi", icon: faTiktok, label: "TikTok" },
   { href: "https://facebook.com/midwifedumebi", icon: faFacebookF, label: "Facebook" },
+  { href: "https://linkedin.com/in/midwifedumebi", icon: faLinkedinIn, label: "LinkedIn" },
 ]
 
 const Footer = () => {
@@ -89,8 +90,8 @@ const Footer = () => {
             <NewsletterForm variant="compact" />
             <div className="mt-4 flex items-center gap-2 text-sm text-text-secondary">
               <FontAwesomeIcon icon={faEnvelope} size="sm" />
-              <a href="mailto:hello@midwifedumebi.com" className="hover:text-rose transition-colors">
-                hello@midwifedumebi.com
+              <a href="mailto:hi@midwifedumebi.com" className="hover:text-rose transition-colors">
+                hi@midwifedumebi.com
               </a>
             </div>
           </div>

@@ -3,9 +3,14 @@ import Link from "next/link"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCircleInfo } from "@fortawesome/pro-solid-svg-icons"
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.midwifedumebi.com"
+
 export const metadata: Metadata = {
-  title: "Disclaimer",
-  description: "Important disclaimer regarding the non-clinical nature of Midwife Dumebi's support services.",
+  title: "Disclaimer | Midwife Dumebi",
+  description: "Important disclaimer regarding the non-clinical nature of Midwife Dumebi's support services. Services complement NHS care but do not replace clinical advice.",
+  alternates: {
+    canonical: `${baseUrl}/disclaimer`,
+  },
 }
 
 const DisclaimerPage = () => {

@@ -4,11 +4,30 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faHeart, faGraduationCap, faHandHoldingHeart, faUserNurse } from "@fortawesome/pro-solid-svg-icons"
 import { Button } from "@/components/ui/button"
 import CTAStrip from "@/components/CTAStrip"
+import Breadcrumbs from "@/components/seo/Breadcrumbs"
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.midwifedumebi.com"
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About Midwife Dumebi | NHS-Experienced Registered Midwife UK",
   description:
-    "Meet Midwife Dumebi - an NMC registered midwife and nurse with over 10 years NHS experience, offering calm, empowering support for your pregnancy journey.",
+    "Meet Dumebi, an NMC registered midwife and nurse with 10+ years NHS experience. Specialising in birth planning, maternity support, and compassionate guidance for UK families.",
+  keywords: [
+    "NHS midwife",
+    "registered midwife UK",
+    "NMC registered midwife",
+    "experienced midwife",
+    "private midwife UK",
+    "birth planning midwife",
+  ],
+  alternates: {
+    canonical: `${baseUrl}/about`,
+  },
+  openGraph: {
+    title: "About Midwife Dumebi | NHS-Experienced Registered Midwife",
+    description: "NMC registered midwife with 10+ years NHS experience, offering compassionate birth planning support.",
+    url: `${baseUrl}/about`,
+  },
 }
 
 const values = [
@@ -40,6 +59,7 @@ const AboutPage = () => {
       {/* Hero section */}
       <section className="py-16 md:py-24 bg-section-alt">
         <div className="container mx-auto px-4">
+          <Breadcrumbs items={[{ label: "About" }]} className="mb-8 max-w-6xl mx-auto" />
           <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Image */}
             <div className="relative order-2 lg:order-1">

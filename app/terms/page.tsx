@@ -1,9 +1,14 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.midwifedumebi.com"
+
 export const metadata: Metadata = {
-  title: "Terms of Service",
-  description: "Terms of Service for Midwife Dumebi's non-clinical midwifery support services.",
+  title: "Terms of Service | Midwife Dumebi",
+  description: "Terms of Service for Midwife Dumebi's non-clinical midwifery support services, including booking, cancellation, and confidentiality policies.",
+  alternates: {
+    canonical: `${baseUrl}/terms`,
+  },
 }
 
 const TermsPage = () => {
@@ -99,8 +104,8 @@ const TermsPage = () => {
                 <h2 className="font-serif text-2xl font-semibold text-text-primary mb-4">9. Contact</h2>
                 <p className="text-text-secondary leading-relaxed">
                   For any questions about these terms, please contact{" "}
-                  <a href="mailto:hello@midwifedumebi.com" className="text-rose hover:underline">
-                    hello@midwifedumebi.com
+                  <a href="mailto:hi@midwifedumebi.com" className="text-rose hover:underline">
+                    hi@midwifedumebi.com
                   </a>
                 </p>
               </section>

@@ -5,6 +5,11 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
+import {
+  generateWebsiteSchema,
+  generateOrganizationSchema,
+  generateLocalBusinessSchema,
+} from "@/lib/seo/json-ld"
 
 const newsreader = Newsreader({
   subsets: ["latin"],
@@ -20,36 +25,74 @@ const manrope = Manrope({
   display: "swap",
 })
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.midwifedumebi.com"
+
 export const metadata: Metadata = {
+  metadataBase: new URL(baseUrl),
   title: {
-    default: "Midwife Dumebi | NHS-Experienced Midwife Support",
+    default: "Midwife Dumebi | Birth Planning Support UK | NHS-Experienced Midwife",
     template: "%s | Midwife Dumebi",
   },
   description:
-    "Calm, empowering support from an NHS-experienced midwife. Non-clinical guidance for birth planning, maternity notes, and emotional support.",
-  keywords: ["midwife", "birth planning", "NHS", "maternity support", "pregnancy", "UK midwife", "birth preferences"],
+    "Expert birth planning support from an NHS-experienced midwife. Virtual consultations for UK parents-to-be. Birth preferences, NHS maternity guidance, and emotional support.",
+  keywords: [
+    "birth planning support UK",
+    "private midwife UK",
+    "NHS maternity guidance",
+    "midwife consultation",
+    "birth preferences",
+    "pregnancy support",
+    "postnatal support",
+    "maternity notes",
+    "birth planning",
+    "UK midwife",
+  ],
   authors: [{ name: "Midwife Dumebi" }],
   creator: "Midwife Dumebi",
+  alternates: {
+    canonical: baseUrl,
+  },
   openGraph: {
     type: "website",
     locale: "en_GB",
-    url: "https://midwifedumebi.com",
+    url: baseUrl,
     siteName: "Midwife Dumebi",
-    title: "Midwife Dumebi | NHS-Experienced Midwife Support",
-    description: "Calm, empowering support from an NHS-experienced midwife.",
+    title: "Midwife Dumebi | Birth Planning Support UK",
+    description: "Expert birth planning support from an NHS-experienced midwife. Virtual consultations across the UK.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Midwife Dumebi | NHS-Experienced Midwife Support",
-    description: "Calm, empowering support from an NHS-experienced midwife.",
+    title: "Midwife Dumebi | Birth Planning Support UK",
+    description: "Expert birth planning support from an NHS-experienced midwife. Virtual consultations across the UK.",
+    creator: "@midwifedumebi",
   },
-    generator: 'v0.app'
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 }
 
 export const viewport: Viewport = {
   themeColor: "#FBF6EF",
   width: "device-width",
   initialScale: 1,
+}
+
+// JSON-LD structured data for SEO
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    generateWebsiteSchema(),
+    generateOrganizationSchema(),
+    generateLocalBusinessSchema(),
+  ],
 }
 
 const RootLayout = ({
@@ -59,6 +102,12 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="en-GB" className={`${newsreader.variable} ${manrope.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="font-sans antialiased min-h-screen flex flex-col">
         <Header />
         <main className="flex-1">{children}</main>

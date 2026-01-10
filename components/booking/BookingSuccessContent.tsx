@@ -129,7 +129,7 @@ const BookingSuccessContent = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild variant="outline" className="rounded-full border-border bg-transparent">
-                  <a href="mailto:hello@midwifedumebi.com">Contact support</a>
+                  <a href="mailto:hi@midwifedumebi.com">Contact support</a>
                 </Button>
                 <Button asChild className="bg-rose hover:bg-terracotta text-white rounded-full">
                   <Link href="/services">View services</Link>
@@ -325,8 +325,8 @@ const BookingSuccessContent = () => {
             className="text-center text-sm text-text-secondary mt-8"
           >
             Having trouble booking? Email{" "}
-            <a href="mailto:hello@midwifedumebi.com" className="text-rose hover:underline">
-              hello@midwifedumebi.com
+            <a href="mailto:hi@midwifedumebi.com" className="text-rose hover:underline">
+              hi@midwifedumebi.com
             </a>{" "}
             and I&apos;ll help you find a time.
           </motion.p>
