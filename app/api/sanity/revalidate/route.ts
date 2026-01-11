@@ -91,8 +91,13 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("[Sanity Webhook] Error:", error);
+    console.error("[Sanity Webhook] Stack:", error instanceof Error ? error.stack : "No stack");
     return NextResponse.json(
-      { message: "Error processing webhook", error: String(error) },
+      {
+        message: "Error processing webhook",
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     );
   }
