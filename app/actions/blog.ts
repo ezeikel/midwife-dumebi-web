@@ -19,12 +19,18 @@ import {
   BLOG_META_SYSTEM,
   BLOG_CONTENT_SYSTEM,
   IMAGE_SEARCH_SYSTEM,
+  IMAGE_GENERATION_PROMPT,
   getBlogMetaPrompt,
   getBlogContentPrompt,
   getImageSearchPrompt,
 } from "@/lib/ai/prompts";
-import { fetchBlogPhoto } from "@/lib/pexels/client";
+import { fetchBlogPhotosForEvaluation, type PexelsPhoto } from "@/lib/pexels/client";
 import { generateSearchTermsForTopic } from "@/lib/pexels/search-terms";
+import { findBestImage } from "@/lib/ai/image-evaluation";
+import { models } from "@/lib/ai/models";
+
+// Image evaluation threshold - images must score at least this confidence
+const IMAGE_EVALUATION_THRESHOLD = 60;
 
 // Schemas for AI responses
 const blogMetaSchema = z.object({
@@ -89,6 +95,44 @@ async function generateImageSearchTerms(
   });
 
   return result.object;
+}
+
+/**
+ * Generate a featured image using Gemini 3 Pro Image
+ * Fallback when Pexels images don't meet quality threshold
+ */
+async function generateImageWithGemini(
+  title: string
+): Promise<{ buffer: Buffer; mimeType: string } | null> {
+  const prompt = IMAGE_GENERATION_PROMPT.replace("{{TITLE}}", title);
+
+  try {
+    console.log("Generating image with Gemini 3 Pro Image...");
+
+    const result = await generateText({
+      model: models.geminiImage,
+      prompt: `Generate a high-quality professional photograph for this blog post. Do not include any text in the image. ${prompt}`,
+    });
+
+    const imageFile = result.files?.find((f) =>
+      f.mediaType?.startsWith("image/")
+    );
+
+    if (imageFile) {
+      console.log("Gemini 3 Pro Image generated image successfully");
+      const buffer = Buffer.from(imageFile.uint8Array);
+      return {
+        buffer,
+        mimeType: imageFile.mediaType,
+      };
+    }
+
+    console.error("Gemini 3 Pro Image response did not contain image data");
+    return null;
+  } catch (error) {
+    console.error("Gemini 3 Pro Image generation failed:", error);
+    return null;
+  }
 }
 
 /**
@@ -318,6 +362,7 @@ async function createSanityPost(data: {
     generatedAt: string;
     model: string;
     pexelsPhotoId?: string;
+    imageSource?: "pexels" | "gemini";
   };
 }) {
   const post = {
@@ -413,55 +458,105 @@ export async function generateRandomBlogPost(): Promise<{
     console.log(`Generating content for: ${meta.title}`);
     const content = await generateBlogContent(topic, meta.title, coveredTopics);
 
-    // 7. Generate image search terms and fetch image
-    console.log("Fetching featured image from Pexels...");
+    // 7. Generate image search terms and fetch image with AI evaluation
+    console.log("Fetching featured image...");
     let featuredImage = null;
     let pexelsPhotoId: string | undefined;
+    let imageSource: "pexels" | "gemini" | undefined;
 
     try {
-      // First try AI-generated search terms
+      // Generate AI search terms
       const imageSearch = await generateImageSearchTerms(
         topic.topic,
         meta.title,
         topic.category
       );
 
-      const { photo, searchTerm } = await fetchBlogPhoto(imageSearch.searchTerms);
+      // Also get fallback terms
+      const fallbackTerms = generateSearchTermsForTopic(topic.topic, topic.category);
+      const allSearchTerms = [...imageSearch.searchTerms, ...fallbackTerms.slice(0, 3)];
 
-      if (photo) {
-        console.log(`Found image with search term: ${searchTerm}`);
+      // Fetch multiple candidate photos for AI evaluation
+      console.log("Fetching candidate photos from Pexels...");
+      const { photos: candidatePhotos } = await fetchBlogPhotosForEvaluation(
+        allSearchTerms,
+        5
+      );
 
-        // Upload to Sanity
-        const imageAsset = await uploadImageToSanity(
-          photo.src.large2x,
-          `${meta.slug}-featured.jpg`
+      if (candidatePhotos.length > 0) {
+        console.log(`Found ${candidatePhotos.length} candidate photos, evaluating with AI...`);
+
+        // Prepare photos for evaluation
+        const photosForEvaluation = candidatePhotos.map((p) => ({
+          url: p.photo.src.large2x,
+          searchTerm: p.searchTerm,
+        }));
+
+        // Evaluate all photos with AI Judge
+        const { selectedIndex, evaluations } = await findBestImage(
+          photosForEvaluation,
+          {
+            title: meta.title,
+            excerpt: meta.excerpt,
+            category: topic.category,
+          },
+          IMAGE_EVALUATION_THRESHOLD
         );
 
-        featuredImage = {
-          asset: imageAsset,
-          alt: imageSearch.altText,
-          credit: photo.photographer,
-          creditUrl: photo.photographer_url,
-        };
-        pexelsPhotoId = String(photo.id);
-      } else {
-        // Try fallback with category-based search terms
-        const fallbackTerms = generateSearchTermsForTopic(topic.topic, topic.category);
-        const fallbackResult = await fetchBlogPhoto(fallbackTerms.slice(0, 5));
+        // Log evaluation results
+        evaluations.forEach((evaluation, index) => {
+          console.log(
+            `Photo ${index + 1}: confidence=${evaluation.confidence}, relevant=${evaluation.isRelevant}, reasoning="${evaluation.reasoning}"`
+          );
+        });
 
-        if (fallbackResult.photo) {
+        if (selectedIndex !== null) {
+          // Use the selected Pexels photo
+          const selectedPhoto = candidatePhotos[selectedIndex];
+          console.log(
+            `Selected Pexels photo ${selectedIndex + 1} with confidence ${evaluations[selectedIndex].confidence}`
+          );
+
           const imageAsset = await uploadImageToSanity(
-            fallbackResult.photo.src.large2x,
+            selectedPhoto.photo.src.large2x,
             `${meta.slug}-featured.jpg`
           );
 
           featuredImage = {
             asset: imageAsset,
-            alt: `Featured image for ${meta.title}`,
-            credit: fallbackResult.photo.photographer,
-            creditUrl: fallbackResult.photo.photographer_url,
+            alt: imageSearch.altText,
+            credit: selectedPhoto.photo.photographer,
+            creditUrl: selectedPhoto.photo.photographer_url,
           };
-          pexelsPhotoId = String(fallbackResult.photo.id);
+          pexelsPhotoId = String(selectedPhoto.photo.id);
+          imageSource = "pexels";
+        } else {
+          console.log(
+            `No Pexels photos met threshold (${IMAGE_EVALUATION_THRESHOLD}), falling back to Gemini...`
+          );
+        }
+      } else {
+        console.log("No Pexels photos found, falling back to Gemini...");
+      }
+
+      // Fallback to Gemini image generation if no suitable Pexels photo
+      if (!featuredImage) {
+        const geminiResult = await generateImageWithGemini(meta.title);
+
+        if (geminiResult) {
+          const imageAsset = await uploadImageToSanity(
+            geminiResult.buffer,
+            `${meta.slug}-featured-generated.png`
+          );
+
+          featuredImage = {
+            asset: imageAsset,
+            alt: imageSearch.altText,
+            credit: "Generated with AI",
+          };
+          imageSource = "gemini";
+        } else {
+          console.warn("Gemini image generation returned no image");
         }
       }
     } catch (imageError) {
@@ -496,6 +591,7 @@ export async function generateRandomBlogPost(): Promise<{
         generatedAt: new Date().toISOString(),
         model: "gpt-4o",
         pexelsPhotoId,
+        imageSource,
       },
     });
 

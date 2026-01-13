@@ -161,3 +161,37 @@ Respond with JSON in this exact format:
   "altText": "Descriptive alt text for accessibility"
 }`;
 }
+
+/**
+ * Prompt for Gemini image generation (fallback when Pexels fails)
+ *
+ * Used when the AI Judge determines no Pexels image meets quality threshold.
+ */
+export const IMAGE_GENERATION_PROMPT = `Create a warm, professional photograph suitable for a UK midwifery and maternity care blog.
+
+REQUIRED ELEMENTS:
+- Feature a Black mother and/or baby in a warm, supportive setting
+- Show diverse representation (various skin tones, family structures welcome)
+- Warm, natural lighting reminiscent of a cozy home or modern NHS birthing environment
+- Soft, calming colour palette (warm neutrals, soft pinks, gentle greens)
+- Professional quality that feels authentic, not overly staged
+
+STYLE GUIDANCE:
+- Documentary/lifestyle photography aesthetic
+- Intimate, tender moments between mother and baby
+- Supportive healthcare interactions where appropriate
+- Modern, clean aesthetic suitable for a professional healthcare blog
+- UK context (avoid obviously American settings)
+
+AVOID:
+- Clinical, sterile hospital imagery
+- Distressing or anxious expressions
+- Graphic medical content
+- Generic stock photo poses
+- Text overlays or watermarks
+- Stereotypical or tokenistic representation
+
+TOPIC CONTEXT:
+{{TITLE}}
+
+Create an image that a new parent would find reassuring and relatable when reading about this topic.`;

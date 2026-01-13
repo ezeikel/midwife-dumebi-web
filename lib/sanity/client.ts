@@ -42,15 +42,24 @@ export function urlFor(source: SanityImageSource) {
   return builder.image(source);
 }
 
-// Upload image to Sanity from URL
+// Upload image to Sanity from URL or Buffer
 export async function uploadImageToSanity(
-  imageUrl: string,
+  source: string | Buffer,
   filename: string
 ): Promise<{ _type: "reference"; _ref: string }> {
-  const response = await fetch(imageUrl);
-  const buffer = await response.arrayBuffer();
+  let buffer: Buffer;
 
-  const asset = await writeClient.assets.upload("image", Buffer.from(buffer), {
+  if (typeof source === "string") {
+    // Source is a URL - fetch the image
+    const response = await fetch(source);
+    const arrayBuffer = await response.arrayBuffer();
+    buffer = Buffer.from(arrayBuffer);
+  } else {
+    // Source is already a Buffer
+    buffer = source;
+  }
+
+  const asset = await writeClient.assets.upload("image", buffer, {
     filename,
   });
 
