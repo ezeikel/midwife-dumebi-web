@@ -176,20 +176,22 @@ const BlogPostContent = ({ post, relatedPosts = [] }: BlogPostContentProps) => {
               </motion.div>
               {post.imageCredit && (
                 <p className="text-xs text-text-secondary text-center mt-2">
-                  Photo by{" "}
                   {post.imageCreditUrl ? (
-                    <a
-                      href={post.imageCreditUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-rose transition-colors"
-                    >
-                      {post.imageCredit}
-                    </a>
+                    <>
+                      Photo by{" "}
+                      <a
+                        href={post.imageCreditUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-rose transition-colors"
+                      >
+                        {post.imageCredit}
+                      </a>{" "}
+                      on Pexels
+                    </>
                   ) : (
                     post.imageCredit
-                  )}{" "}
-                  on Pexels
+                  )}
                 </p>
               )}
             </div>
