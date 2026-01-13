@@ -174,24 +174,18 @@ const BlogPostContent = ({ post, relatedPosts = [] }: BlogPostContentProps) => {
                   priority
                 />
               </motion.div>
-              {post.imageCredit && (
+              {post.imageCredit && post.imageCreditUrl && (
                 <p className="text-xs text-text-secondary text-center mt-2">
-                  {post.imageCreditUrl ? (
-                    <>
-                      Photo by{" "}
-                      <a
-                        href={post.imageCreditUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-rose transition-colors"
-                      >
-                        {post.imageCredit}
-                      </a>{" "}
-                      on Pexels
-                    </>
-                  ) : (
-                    post.imageCredit
-                  )}
+                  Photo by{" "}
+                  <a
+                    href={post.imageCreditUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-rose transition-colors"
+                  >
+                    {post.imageCredit}
+                  </a>{" "}
+                  on Pexels
                 </p>
               )}
             </div>
