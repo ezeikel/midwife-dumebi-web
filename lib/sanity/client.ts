@@ -3,7 +3,7 @@ import { createImageUrlBuilder } from "@sanity/image-url";
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "placeholder";
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
-const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-01-01";
+const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2025-02-19";
 
 // Check if Sanity is configured
 const isSanityConfigured = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID && process.env.NEXT_PUBLIC_SANITY_PROJECT_ID !== "placeholder";
