@@ -32,6 +32,19 @@ import { models } from "@/lib/ai/models";
 // Image evaluation threshold - images must score at least this confidence
 const IMAGE_EVALUATION_THRESHOLD = 60;
 
+/**
+ * Get all Pexels photo IDs that are already used in blog posts
+ * Used for deduplication to avoid reusing the same images
+ */
+async function getUsedPexelsIds(excludePostId?: string): Promise<string[]> {
+  const query = excludePostId
+    ? `*[_type == "post" && _id != $excludePostId && defined(generationMeta.pexelsPhotoId)].generationMeta.pexelsPhotoId`
+    : `*[_type == "post" && defined(generationMeta.pexelsPhotoId)].generationMeta.pexelsPhotoId`;
+
+  const ids = await client.fetch<string[]>(query, { excludePostId });
+  return ids;
+}
+
 // Schemas for AI responses
 const blogMetaSchema = z.object({
   title: z.string().max(100),
@@ -476,11 +489,15 @@ export async function generateRandomBlogPost(): Promise<{
       const fallbackTerms = generateSearchTermsForTopic(topic.topic, topic.category);
       const allSearchTerms = [...imageSearch.searchTerms, ...fallbackTerms.slice(0, 3)];
 
+      // Get already-used Pexels IDs to avoid duplicates
+      const usedPexelsIds = await getUsedPexelsIds();
+      console.log(`Excluding ${usedPexelsIds.length} already-used Pexels photos`);
+
       // Fetch multiple candidate photos for AI evaluation
       console.log("Fetching candidate photos from Pexels...");
       const { photos: candidatePhotos } = await fetchBlogPhotosForEvaluation(
         allSearchTerms,
-        5
+        { maxPhotos: 5, excludeIds: usedPexelsIds }
       );
 
       if (candidatePhotos.length > 0) {
@@ -643,5 +660,261 @@ export async function getBlogGenerationStats(): Promise<{
   return {
     ...stats,
     topicsByCategory,
+  };
+}
+
+/**
+ * Get a featured image for a blog post with AI evaluation and Gemini fallback
+ * Supports deduplication by excluding already-used Pexels photo IDs
+ */
+async function getFeaturedImage(
+  title: string,
+  excerpt: string,
+  category: string,
+  slug: string,
+  excludePostId?: string
+): Promise<{
+  asset: { _type: "reference"; _ref: string };
+  alt: string;
+  credit?: string;
+  creditUrl?: string;
+  pexelsPhotoId?: string;
+  imageSource: "pexels" | "gemini";
+} | null> {
+  try {
+    // Generate AI search terms
+    const imageSearch = await generateImageSearchTerms(title, title, category);
+
+    // Get already-used Pexels IDs to avoid duplicates
+    const usedPexelsIds = await getUsedPexelsIds(excludePostId);
+    console.log(`Excluding ${usedPexelsIds.length} already-used Pexels photos`);
+
+    // Fetch multiple candidate photos for AI evaluation
+    console.log("Fetching candidate photos from Pexels...");
+    const { photos: candidatePhotos } = await fetchBlogPhotosForEvaluation(
+      imageSearch.searchTerms,
+      { maxPhotos: 5, excludeIds: usedPexelsIds }
+    );
+
+    if (candidatePhotos.length > 0) {
+      console.log(`Found ${candidatePhotos.length} candidate photos, evaluating with AI...`);
+
+      // Prepare photos for evaluation
+      const photosForEvaluation = candidatePhotos.map((p) => ({
+        url: p.photo.src.large2x,
+        searchTerm: p.searchTerm,
+      }));
+
+      // Evaluate all photos with AI Judge
+      const { selectedIndex, evaluations } = await findBestImage(
+        photosForEvaluation,
+        { title, excerpt, category },
+        IMAGE_EVALUATION_THRESHOLD
+      );
+
+      // Log evaluation results
+      evaluations.forEach((evaluation, index) => {
+        console.log(
+          `Photo ${index + 1}: confidence=${evaluation.confidence}, relevant=${evaluation.isRelevant}, reasoning="${evaluation.reasoning}"`
+        );
+      });
+
+      if (selectedIndex !== null) {
+        // Use the selected Pexels photo
+        const selectedPhoto = candidatePhotos[selectedIndex];
+        console.log(
+          `Selected Pexels photo ${selectedIndex + 1} with confidence ${evaluations[selectedIndex].confidence}`
+        );
+
+        const imageAsset = await uploadImageToSanity(
+          selectedPhoto.photo.src.large2x,
+          `${slug}-featured.jpg`
+        );
+
+        return {
+          asset: imageAsset,
+          alt: imageSearch.altText,
+          credit: selectedPhoto.photo.photographer,
+          creditUrl: selectedPhoto.photo.photographer_url,
+          pexelsPhotoId: String(selectedPhoto.photo.id),
+          imageSource: "pexels",
+        };
+      }
+
+      console.log(
+        `No Pexels photos met threshold (${IMAGE_EVALUATION_THRESHOLD}), falling back to Gemini...`
+      );
+    } else {
+      console.log("No Pexels photos found, falling back to Gemini...");
+    }
+
+    // Fallback to Gemini image generation
+    const geminiResult = await generateImageWithGemini(title);
+
+    if (geminiResult) {
+      const imageAsset = await uploadImageToSanity(
+        geminiResult.buffer,
+        `${slug}-featured-generated.png`
+      );
+
+      return {
+        asset: imageAsset,
+        alt: imageSearch.altText,
+        credit: "Generated with AI",
+        imageSource: "gemini",
+      };
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Failed to get featured image:", error);
+    return null;
+  }
+}
+
+/**
+ * Regenerate featured image for an existing post
+ * Uses AI Judge + Gemini fallback with deduplication
+ */
+export async function regeneratePostImage(
+  postId: string
+): Promise<{
+  success: boolean;
+  imageSource?: "pexels" | "gemini";
+  error?: string;
+}> {
+  try {
+    // 1. Fetch post details
+    const post = await writeClient.fetch<{
+      _id: string;
+      title: string;
+      excerpt: string;
+      slug: string;
+      category: string;
+    } | null>(
+      `*[_type == "post" && _id == $postId][0]{
+        _id,
+        title,
+        excerpt,
+        "slug": slug.current,
+        "category": category->title
+      }`,
+      { postId }
+    );
+
+    if (!post) {
+      return { success: false, error: "Post not found" };
+    }
+
+    console.log(`Regenerating image for post: ${post.title}`);
+
+    // 2. Get new featured image using AI Judge + Gemini fallback
+    const featuredImage = await getFeaturedImage(
+      post.title,
+      post.excerpt || "",
+      post.category || "Pregnancy",
+      post.slug,
+      post._id
+    );
+
+    if (!featuredImage) {
+      return { success: false, error: "Failed to generate image" };
+    }
+
+    // 3. Update post with new image
+    await writeClient
+      .patch(postId)
+      .set({
+        featuredImage: {
+          _type: "image",
+          asset: featuredImage.asset,
+          alt: featuredImage.alt,
+          credit: featuredImage.credit,
+          creditUrl: featuredImage.creditUrl,
+        },
+        "generationMeta.pexelsPhotoId": featuredImage.pexelsPhotoId || null,
+        "generationMeta.imageSource": featuredImage.imageSource,
+        "generationMeta.imageUpdatedAt": new Date().toISOString(),
+      })
+      .commit();
+
+    console.log(`Successfully regenerated image (${featuredImage.imageSource})`);
+
+    return { success: true, imageSource: featuredImage.imageSource };
+  } catch (error) {
+    console.error("Failed to regenerate post image:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+/**
+ * Regenerate images for all posts (batch operation)
+ */
+export async function regenerateAllPostImages(): Promise<{
+  total: number;
+  successful: number;
+  failed: number;
+  results: Array<{
+    postId: string;
+    title: string;
+    success: boolean;
+    imageSource?: "pexels" | "gemini";
+    error?: string;
+  }>;
+}> {
+  // Fetch all posts
+  const posts = await writeClient.fetch<Array<{ _id: string; title: string }>>(
+    `*[_type == "post"] | order(publishedAt desc) { _id, title }`
+  );
+
+  console.log(`Found ${posts.length} posts to process\n`);
+
+  const results: Array<{
+    postId: string;
+    title: string;
+    success: boolean;
+    imageSource?: "pexels" | "gemini";
+    error?: string;
+  }> = [];
+
+  let successful = 0;
+  let failed = 0;
+
+  for (const post of posts) {
+    const progress = `[${results.length + 1}/${posts.length}]`;
+    console.log(`${progress} Processing: ${post.title}`);
+
+    const result = await regeneratePostImage(post._id);
+
+    results.push({
+      postId: post._id,
+      title: post.title,
+      success: result.success,
+      imageSource: result.imageSource,
+      error: result.error,
+    });
+
+    if (result.success) {
+      successful++;
+      console.log(`${progress} ✓ Success (${result.imageSource})`);
+    } else {
+      failed++;
+      console.log(`${progress} ✗ Failed: ${result.error}`);
+    }
+
+    // Small delay to avoid rate limits
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+
+  console.log(`\nBatch regeneration complete: ${successful} successful, ${failed} failed`);
+
+  return {
+    total: posts.length,
+    successful,
+    failed,
+    results,
   };
 }

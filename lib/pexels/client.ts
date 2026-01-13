@@ -188,13 +188,18 @@ export interface FetchBlogPhotosResult {
  * and select the most relevant one.
  *
  * @param searchTerms - Array of search terms to try
- * @param maxPhotos - Maximum number of photos to return (default: 5)
+ * @param options - Options including maxPhotos and excludeIds for deduplication
  * @returns Array of photos with their search terms
  */
 export async function fetchBlogPhotosForEvaluation(
   searchTerms: string[],
-  maxPhotos: number = 5
+  options: {
+    maxPhotos?: number;
+    excludeIds?: string[];
+  } = {}
 ): Promise<FetchBlogPhotosResult> {
+  const { maxPhotos = 5, excludeIds = [] } = options;
+  const excludeSet = new Set(excludeIds);
   const results: Array<{ photo: PexelsPhoto; searchTerm: string }> = [];
 
   for (const term of searchTerms) {
@@ -207,9 +212,12 @@ export async function fetchBlogPhotosForEvaluation(
         per_page: 15,
       });
 
-      // Take top photos from this search term
+      // Filter out already-used photos, then take top results
+      const availablePhotos = response.photos.filter(
+        (photo) => !excludeSet.has(String(photo.id))
+      );
       const remaining = maxPhotos - results.length;
-      const topPhotos = response.photos.slice(0, Math.min(3, remaining));
+      const topPhotos = availablePhotos.slice(0, Math.min(3, remaining));
 
       for (const photo of topPhotos) {
         results.push({ photo, searchTerm: term });
