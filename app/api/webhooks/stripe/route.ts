@@ -8,6 +8,7 @@ import {
   sendBookingConfirmation,
   sendPurchaseConfirmation,
   sendAdminBookingNotification,
+  sendAdminNotification,
 } from "@/lib/email"
 import {
   createCalendarEventData,
@@ -71,6 +72,18 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       console.log("Purchase confirmation email sent for digital product:", service.title, "Download link:", downloadLink)
     } catch (error) {
       console.error("Failed to send purchase confirmation email:", error)
+    }
+
+    // Send admin notification for digital purchase
+    try {
+      await sendAdminNotification("digital_purchase", {
+        customerName,
+        customerEmail,
+        itemName: service.title,
+        amountPaid: session.amount_total || 0,
+      })
+    } catch (error) {
+      console.error("Failed to send admin notification for digital purchase:", error)
     }
     return
   }

@@ -11,6 +11,10 @@ import NewBookingNotificationEmail, {
   type NewBookingNotificationEmailProps,
 } from "@/emails/NewBookingNotificationEmail"
 import FreeGuideEmail, { type FreeGuideEmailProps } from "@/emails/FreeGuideEmail"
+import AdminNotificationEmail, {
+  type AdminNotificationEmailProps,
+  type AdminNotificationEventType,
+} from "@/emails/AdminNotificationEmail"
 
 const isProduction = process.env.NODE_ENV === "production"
 const FROM_EMAIL = "Midwife Dumebi <noreply@notifications.midwifedumebi.com>"
@@ -126,6 +130,7 @@ export async function sendPurchaseConfirmation(
 
 /**
  * Send admin notification emails when a new booking is made
+ * @deprecated Use sendAdminNotification instead
  */
 export async function sendAdminBookingNotification(data: NewBookingNotificationEmailProps) {
   const emailComponent = NewBookingNotificationEmail(data)
@@ -141,6 +146,50 @@ export async function sendAdminBookingNotification(data: NewBookingNotificationE
       })
     )
   )
+
+  return results
+}
+
+/**
+ * Unified admin notification for all events (bookings, purchases, free downloads)
+ * Sends to all admin email addresses
+ */
+export async function sendAdminNotification(
+  eventType: AdminNotificationEventType,
+  data: Omit<AdminNotificationEmailProps, "eventType">
+) {
+  const emailProps: AdminNotificationEmailProps = {
+    eventType,
+    ...data,
+  }
+
+  const emailComponent = AdminNotificationEmail(emailProps)
+  const html = await render(emailComponent)
+
+  const subjectPrefixes: Record<AdminNotificationEventType, string> = {
+    booking: "New Booking",
+    digital_purchase: "New Sale",
+    free_guide: "New Download",
+  }
+
+  const subject = `${subjectPrefixes[eventType]}: ${data.itemName} - ${data.customerName}`
+
+  const results = await Promise.all(
+    ADMIN_EMAILS.map((email) =>
+      sendEmail({
+        to: email,
+        subject,
+        html,
+        react: emailComponent,
+      })
+    )
+  )
+
+  console.log(`Admin notification sent for ${eventType}:`, {
+    itemName: data.itemName,
+    customerEmail: data.customerEmail,
+    recipients: ADMIN_EMAILS,
+  })
 
   return results
 }

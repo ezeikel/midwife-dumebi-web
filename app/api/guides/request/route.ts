@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getResourceById } from "@/lib/resources"
 import { generateDownloadToken, createTokenPayload } from "@/lib/download-tokens"
-import { sendFreeGuideEmail, addToResendAudience } from "@/lib/email"
+import { sendFreeGuideEmail, addToResendAudience, sendAdminNotification } from "@/lib/email"
 
 type RequestBody = {
   email: string
@@ -103,6 +103,15 @@ export async function POST(request: NextRequest) {
       guideId,
       email,
       name: firstName,
+    })
+
+    // Send admin notification for free guide download
+    sendAdminNotification("free_guide", {
+      customerName: name,
+      customerEmail: email,
+      itemName: guide.title,
+    }).catch((error) => {
+      console.error("Failed to send admin notification for free guide:", error)
     })
 
     return NextResponse.json({
