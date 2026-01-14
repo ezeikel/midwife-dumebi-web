@@ -74,6 +74,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       console.error("Failed to send purchase confirmation email:", error)
     }
 
+    // Small delay to avoid Resend rate limits (2 req/sec)
+    await new Promise((resolve) => setTimeout(resolve, 600))
+
     // Send admin notification for digital purchase
     try {
       await sendAdminNotification("digital_purchase", {
