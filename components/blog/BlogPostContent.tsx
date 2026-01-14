@@ -286,10 +286,10 @@ const BlogPostContent = ({ post, relatedPosts = [] }: BlogPostContentProps) => {
                     alt={post.author}
                     width={64}
                     height={64}
-                    className="w-16 h-16 rounded-full object-cover"
+                    className="w-16 h-16 rounded-full object-cover flex-shrink-0"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-full bg-blush/20 flex items-center justify-center text-rose font-serif font-semibold text-xl">
+                  <div className="w-16 h-16 rounded-full bg-blush/20 flex items-center justify-center text-rose font-serif font-semibold text-xl flex-shrink-0">
                     MD
                   </div>
                 )}
