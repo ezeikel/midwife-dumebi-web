@@ -58,6 +58,11 @@ type SendEmailOptions = {
 }
 
 /**
+ * Delay helper to avoid rate limits (Resend allows 2 requests/second)
+ */
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+/**
  * Send an email using Resend in production or Mailtrap in development
  */
 async function sendEmail(options: SendEmailOptions) {
@@ -136,16 +141,20 @@ export async function sendAdminBookingNotification(data: NewBookingNotificationE
   const emailComponent = NewBookingNotificationEmail(data)
   const html = await render(emailComponent)
 
-  const results = await Promise.all(
-    ADMIN_EMAILS.map((email) =>
-      sendEmail({
-        to: email,
-        subject: `New Booking: ${data.serviceName} - ${data.customerName}`,
-        html,
-        react: emailComponent,
-      })
-    )
-  )
+  // Send emails sequentially with delay to avoid Resend rate limits (2 req/sec)
+  const results = []
+  for (let i = 0; i < ADMIN_EMAILS.length; i++) {
+    if (i > 0) {
+      await delay(600) // 600ms delay between emails
+    }
+    const result = await sendEmail({
+      to: ADMIN_EMAILS[i],
+      subject: `New Booking: ${data.serviceName} - ${data.customerName}`,
+      html,
+      react: emailComponent,
+    })
+    results.push(result)
+  }
 
   return results
 }
@@ -174,16 +183,20 @@ export async function sendAdminNotification(
 
   const subject = `${subjectPrefixes[eventType]}: ${data.itemName} - ${data.customerName}`
 
-  const results = await Promise.all(
-    ADMIN_EMAILS.map((email) =>
-      sendEmail({
-        to: email,
-        subject,
-        html,
-        react: emailComponent,
-      })
-    )
-  )
+  // Send emails sequentially with delay to avoid Resend rate limits (2 req/sec)
+  const results = []
+  for (let i = 0; i < ADMIN_EMAILS.length; i++) {
+    if (i > 0) {
+      await delay(600) // 600ms delay between emails
+    }
+    const result = await sendEmail({
+      to: ADMIN_EMAILS[i],
+      subject,
+      html,
+      react: emailComponent,
+    })
+    results.push(result)
+  }
 
   console.log(`Admin notification sent for ${eventType}:`, {
     itemName: data.itemName,
