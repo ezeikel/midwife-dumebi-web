@@ -17,7 +17,7 @@ import {
   generateICSDownloadUrl,
 } from "@/lib/calendar"
 
-const webhookSecret = process.env.STRIPE_ENDPOINT_SECRET
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
 
 /**
  * Handle checkout.session.completed event
