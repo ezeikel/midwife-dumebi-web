@@ -100,30 +100,27 @@ export async function POST(request: NextRequest) {
       name: firstName,
     })
 
-    // Run background tasks sequentially to avoid Resend rate limits (2 req/sec)
-    // These are non-blocking so the response returns immediately
-    ;(async () => {
-      try {
-        // Add to Resend Audiences (this is an API call that counts toward rate limit)
-        await addToResendAudience(email, firstName, lastName)
-      } catch (error) {
-        console.error("Failed to add to Resend Audience:", error)
-      }
+    // Run remaining tasks sequentially to avoid Resend rate limits (2 req/sec)
+    try {
+      // Add to Resend Audiences (this is an API call that counts toward rate limit)
+      await addToResendAudience(email, firstName, lastName)
+    } catch (error) {
+      console.error("Failed to add to Resend Audience:", error)
+    }
 
-      // Small delay before admin notification
-      await new Promise((resolve) => setTimeout(resolve, 600))
+    // Small delay before admin notification
+    await new Promise((resolve) => setTimeout(resolve, 600))
 
-      try {
-        // Send admin notification
-        await sendAdminNotification("free_guide", {
-          customerName: name,
-          customerEmail: email,
-          itemName: guide.title,
-        })
-      } catch (error) {
-        console.error("Failed to send admin notification for free guide:", error)
-      }
-    })()
+    try {
+      // Send admin notification
+      await sendAdminNotification("free_guide", {
+        customerName: name,
+        customerEmail: email,
+        itemName: guide.title,
+      })
+    } catch (error) {
+      console.error("Failed to send admin notification for free guide:", error)
+    }
 
     return NextResponse.json({
       success: true,
