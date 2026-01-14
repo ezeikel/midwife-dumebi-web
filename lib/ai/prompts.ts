@@ -170,18 +170,19 @@ Respond with JSON in this exact format:
 export const IMAGE_GENERATION_PROMPT = `Create a warm, professional photograph suitable for a UK midwifery and maternity care blog.
 
 REQUIRED ELEMENTS:
-- Feature a Black mother and/or baby in a warm, supportive setting
-- Show diverse representation (various skin tones, family structures welcome)
+- Feature a mother and/or baby in a warm, supportive setting
+- IMPORTANT: Show diverse ethnic representation reflecting multicultural UK society - include a variety of ethnicities across different images (South Asian, Black, White, East Asian, Middle Eastern, Mixed heritage families). Do NOT default to any single ethnicity.
 - Warm, natural lighting reminiscent of a cozy home or modern NHS birthing environment
 - Soft, calming colour palette (warm neutrals, soft pinks, gentle greens)
 - Professional quality that feels authentic, not overly staged
 
 STYLE GUIDANCE:
 - Documentary/lifestyle photography aesthetic
-- Intimate, tender moments between mother and baby
-- Supportive healthcare interactions where appropriate
+- Intimate, tender moments between mother and baby or supportive partner/family interactions
+- Supportive healthcare interactions where appropriate (midwife with mother)
 - Modern, clean aesthetic suitable for a professional healthcare blog
-- UK context (avoid obviously American settings)
+- UK context (British home settings, NHS environments - avoid obviously American settings)
+- Diverse family structures welcome (single parents, same-sex couples, extended family support)
 
 AVOID:
 - Clinical, sterile hospital imagery
@@ -190,8 +191,9 @@ AVOID:
 - Generic stock photo poses
 - Text overlays or watermarks
 - Stereotypical or tokenistic representation
+- Defaulting to only one ethnicity across multiple images
 
 TOPIC CONTEXT:
 {{TITLE}}
 
-Create an image that a new parent would find reassuring and relatable when reading about this topic.`;
+Create an image that reflects the diverse multicultural families in the UK and that a new parent of any background would find reassuring and relatable when reading about this topic.`;
