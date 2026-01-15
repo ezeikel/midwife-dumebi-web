@@ -1,7 +1,10 @@
 import { withSentryConfig } from "@sentry/nextjs";
+import { withPlausibleProxy } from "next-plausible";
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const nextConfig: NextConfig = withPlausibleProxy({
+  scriptName: "pa-0PRrTT2VBy-lbb4JTUDXh",
+})({
   cacheComponents: true,
   cacheLife: {
     // Blog list - updates via webhook when new posts published
@@ -37,7 +40,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-};
+});
 
 export default withSentryConfig(nextConfig, {
   // For all available options, see:

@@ -11,11 +11,7 @@ export default function Providers({ children }: Props) {
   return (
     <PlausibleProvider
       domain="www.midwifedumebi.com"
-      customDomain="https://plausible.io"
-      selfHosted
-      scriptProps={{
-        src: "https://plausible.io/js/pa-0PRrTT2VBy-lbb4JTUDXh.js",
-      }}
+      trackOutboundLinks
     >
       {children}
     </PlausibleProvider>
