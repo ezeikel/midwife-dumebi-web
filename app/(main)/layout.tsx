@@ -2,9 +2,9 @@ import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Newsreader, Manrope } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
-import PlausibleProvider from "next-plausible"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
+import Providers from "./providers"
 import {
   generateWebsiteSchema,
   generateOrganizationSchema,
@@ -103,24 +103,18 @@ const MainLayout = ({
   return (
     <html lang="en-GB" className={`${newsreader.variable} ${manrope.variable}`}>
       <head>
-        <PlausibleProvider
-          domain="midwifedumebi.com"
-          customDomain="https://plausible.io"
-          selfHosted
-          scriptProps={{
-            src: "https://plausible.io/js/pa-0PRrTT2VBy-lbb4JTUDXh.js",
-          }}
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body className="font-sans antialiased min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <Analytics />
+        <Providers>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <Analytics />
+        </Providers>
       </body>
     </html>
   )
