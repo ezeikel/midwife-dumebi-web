@@ -10,7 +10,7 @@ type Props = {
 export default function Providers({ children }: Props) {
   return (
     <PlausibleProvider
-      domain="www.midwifedumebi.com"
+      domain="midwifedumebi.com"
       trackOutboundLinks
     >
       {children}
