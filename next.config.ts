@@ -2,9 +2,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 import { withPlausibleProxy } from "next-plausible";
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = withPlausibleProxy({
-  scriptName: "pa-0PRrTT2VBy-lbb4JTUDXh",
-})({
+const nextConfig: NextConfig = withPlausibleProxy()({
   cacheComponents: true,
   cacheLife: {
     // Blog list - updates via webhook when new posts published
