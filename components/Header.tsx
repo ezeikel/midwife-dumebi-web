@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -44,11 +45,17 @@ const Header = () => {
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link
-            href="/"
-            className="font-serif text-xl md:text-2xl font-semibold text-text-primary tracking-tight hover:text-rose transition-colors"
-          >
-            Midwife Dumebi
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <Image
+              src="/logos/md-logo.svg"
+              alt="Midwife Dumebi logo"
+              width={26}
+              height={48}
+              className="h-10 md:h-12 w-auto"
+            />
+            <span className="text-xl md:text-2xl font-semibold tracking-tight" style={{ color: '#8C8077', fontFamily: 'var(--font-nunito)' }}>
+              Midwife Dumebi
+            </span>
           </Link>
 
           {/* Desktop Navigation */}

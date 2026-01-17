@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { cacheLife } from "next/cache"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faInstagram, faFacebookF, faTiktok, faLinkedinIn } from "@fortawesome/free-brands-svg-icons"
@@ -40,8 +41,17 @@ const Footer = async () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-1">
-            <Link href="/" className="font-serif text-xl font-semibold text-text-primary tracking-tight">
-              Midwife Dumebi
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <Image
+                src="/logos/md-logo.svg"
+                alt="Midwife Dumebi logo"
+                width={30}
+                height={56}
+                className="h-14 w-auto"
+              />
+              <span className="text-xl font-semibold tracking-tight" style={{ color: '#8C8077', fontFamily: 'var(--font-nunito)' }}>
+                Midwife Dumebi
+              </span>
             </Link>
             <p className="mt-4 text-sm text-text-secondary leading-relaxed">
               NHS-experienced midwife offering calm, empowering support for your pregnancy and birth journey.

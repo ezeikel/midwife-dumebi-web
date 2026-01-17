@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
-import { Newsreader, Manrope } from "next/font/google"
+import { Newsreader, Manrope, Nunito } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
@@ -24,6 +24,14 @@ const manrope = Manrope({
   variable: "--font-manrope",
   display: "swap",
 })
+
+const nunito = Nunito({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-nunito",
+  display: "swap",
+})
+
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.midwifedumebi.com"
 
@@ -101,7 +109,7 @@ const MainLayout = ({
   children: React.ReactNode
 }) => {
   return (
-    <html lang="en-GB" className={`${newsreader.variable} ${manrope.variable}`}>
+    <html lang="en-GB" className={`${newsreader.variable} ${manrope.variable} ${nunito.variable}`}>
       <head>
         <script
           type="application/ld+json"

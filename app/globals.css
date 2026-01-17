@@ -78,6 +78,7 @@
   --font-sans: "Manrope", "Manrope Fallback", system-ui, sans-serif;
   --font-serif: "Newsreader", "Newsreader Fallback", Georgia, serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", monospace;
+  --font-nunito: var(--font-nunito), "Nunito", system-ui, sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
