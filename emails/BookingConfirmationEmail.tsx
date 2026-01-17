@@ -163,8 +163,8 @@ export default function BookingConfirmationEmail({
         <Container style={container}>
           <Img
             src="https://www.midwifedumebi.com/logos/md-logo.png"
-            width="50"
-            height="94"
+            width="60"
+            height="60"
             alt="Midwife Dumebi"
             style={logo}
           />
