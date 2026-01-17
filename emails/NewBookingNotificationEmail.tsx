@@ -146,9 +146,9 @@ export default function NewBookingNotificationEmail({
       <Body style={main}>
         <Container style={container}>
           <Img
-            src="https://midwifedumebi.com/images/logo.svg"
-            width="150"
-            height="40"
+            src="https://www.midwifedumebi.com/logos/md-logo.png"
+            width="50"
+            height="94"
             alt="Midwife Dumebi"
             style={logo}
           />

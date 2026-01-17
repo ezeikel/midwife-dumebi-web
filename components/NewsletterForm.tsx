@@ -25,14 +25,31 @@ const NewsletterForm = ({ variant = "default", className }: NewsletterFormProps)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus("loading")
+    setMessage("")
 
-    // Placeholder - replace with actual newsletter provider integration
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    try {
+      const response = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name: name || undefined }),
+      })
 
-    setStatus("success")
-    setMessage("Thanks for subscribing! Check your inbox for a confirmation email.")
-    setEmail("")
-    setName("")
+      const data = await response.json()
+
+      if (!response.ok) {
+        setStatus("error")
+        setMessage(data.error || "Something went wrong. Please try again.")
+        return
+      }
+
+      setStatus("success")
+      setMessage(data.message || "Thanks for subscribing!")
+      setEmail("")
+      setName("")
+    } catch {
+      setStatus("error")
+      setMessage("Something went wrong. Please try again.")
+    }
   }
 
   if (status === "success") {

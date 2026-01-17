@@ -12,10 +12,8 @@ import {
   Img,
 } from "@react-email/components"
 
-export type PurchaseConfirmationEmailProps = {
-  customerName: string
-  productName: string
-  downloadLink: string
+export type NewsletterWelcomeEmailProps = {
+  subscriberName?: string
 }
 
 const main = {
@@ -48,19 +46,18 @@ const text = {
   margin: "0 0 16px",
 }
 
-const productBox = {
+const highlightBox = {
   backgroundColor: "#f5ebe0",
   borderRadius: "8px",
   padding: "24px",
   margin: "24px 0",
-  textAlign: "center" as const,
 }
 
-const productTitle = {
+const listItem = {
   color: "#2a1e1a",
-  fontSize: "20px",
-  fontWeight: "600",
-  margin: "0 0 8px",
+  fontSize: "16px",
+  lineHeight: "1.8",
+  margin: "0",
 }
 
 const buttonStyle = {
@@ -94,15 +91,15 @@ const logo = {
   display: "block",
 }
 
-export default function PurchaseConfirmationEmail({
-  customerName,
-  productName,
-  downloadLink,
-}: PurchaseConfirmationEmailProps) {
+export default function NewsletterWelcomeEmail({
+  subscriberName,
+}: NewsletterWelcomeEmailProps) {
+  const greeting = subscriberName ? `Hi ${subscriberName},` : "Hi there,"
+
   return (
     <Html>
       <Head />
-      <Preview>Your download is ready - {productName}</Preview>
+      <Preview>Welcome to the Midwife Dumebi community!</Preview>
       <Body style={main}>
         <Container style={container}>
           <Img
@@ -113,38 +110,43 @@ export default function PurchaseConfirmationEmail({
             style={logo}
           />
 
-          <Heading style={heading}>Thank You for Your Purchase!</Heading>
+          <Heading style={heading}>Welcome to the Community!</Heading>
 
-          <Text style={text}>Hi {customerName},</Text>
+          <Text style={text}>{greeting}</Text>
 
           <Text style={text}>
-            Thank you for purchasing from Midwife Dumebi. Your digital guide is ready to download.
+            Thank you for subscribing! I&apos;m so glad you&apos;re here. You&apos;ve just joined a
+            community of parents-to-be who are taking an active role in their pregnancy and birth
+            journey.
           </Text>
 
-          <Section style={productBox}>
-            <Text style={productTitle}>{productName}</Text>
-            <Link href={downloadLink} style={buttonStyle}>
-              Download Now
-            </Link>
+          <Section style={highlightBox}>
+            <Text style={{ ...text, fontWeight: "600", margin: "0 0 12px" }}>
+              What you can expect from me:
+            </Text>
+            <Text style={listItem}>• Evidence-based pregnancy and birth tips</Text>
+            <Text style={listItem}>• Guidance on navigating NHS maternity care</Text>
+            <Text style={listItem}>• Exclusive resources and guides</Text>
+            <Text style={listItem}>• Early access to new services and offerings</Text>
           </Section>
 
           <Text style={text}>
-            Click the button above to access your guide. If the button doesn&apos;t work, you can
-            copy and paste this link into your browser:
+            In the meantime, feel free to explore my services if you&apos;re looking for
+            personalised support with birth planning, understanding your maternity notes, or
+            preparing for your journey ahead.
           </Text>
 
-          <Text style={{ ...text, fontSize: "14px", color: "#6b5b53", wordBreak: "break-all" }}>
-            {downloadLink}
-          </Text>
+          <Link href="https://www.midwifedumebi.com/services" style={buttonStyle}>
+            Explore Services
+          </Link>
 
           <Hr style={hr} />
 
           <Text style={text}>
-            <strong>Need help?</strong>
+            <strong>Have questions?</strong>
           </Text>
           <Text style={text}>
-            If you have any questions about using the guide or need support, please reply to this
-            email and I&apos;ll be happy to help.
+            Simply reply to this email - I read every message and love hearing from you!
           </Text>
 
           <Hr style={hr} />
@@ -157,6 +159,15 @@ export default function PurchaseConfirmationEmail({
 
           <Text style={{ ...footer, marginTop: "16px" }}>
             Midwife Dumebi | Supporting you on your pregnancy journey
+          </Text>
+
+          <Text style={{ ...footer, marginTop: "16px", fontSize: "12px" }}>
+            You&apos;re receiving this email because you subscribed to updates from midwifedumebi.com.
+            You can{" "}
+            <Link href="{{{RESEND_UNSUBSCRIBE_URL}}}" style={{ color: "#6b5b53" }}>
+              unsubscribe
+            </Link>{" "}
+            at any time.
           </Text>
         </Container>
       </Body>

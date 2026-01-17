@@ -11,6 +11,9 @@ import NewBookingNotificationEmail, {
   type NewBookingNotificationEmailProps,
 } from "@/emails/NewBookingNotificationEmail"
 import FreeGuideEmail, { type FreeGuideEmailProps } from "@/emails/FreeGuideEmail"
+import NewsletterWelcomeEmail, {
+  type NewsletterWelcomeEmailProps,
+} from "@/emails/NewsletterWelcomeEmail"
 import AdminNotificationEmail, {
   type AdminNotificationEmailProps,
   type AdminNotificationEventType,
@@ -219,6 +222,23 @@ export async function sendFreeGuideEmail(data: FreeGuideEmailProps & { to: strin
   return sendEmail({
     to,
     subject: `Your Free Guide: ${emailProps.guideName}`,
+    html,
+    react: emailComponent,
+  })
+}
+
+/**
+ * Send a newsletter welcome email
+ */
+export async function sendNewsletterWelcome(data: NewsletterWelcomeEmailProps & { to: string }) {
+  const { to, ...emailProps } = data
+
+  const emailComponent = NewsletterWelcomeEmail(emailProps)
+  const html = await render(emailComponent)
+
+  return sendEmail({
+    to,
+    subject: "Welcome to the Midwife Dumebi Community!",
     html,
     react: emailComponent,
   })
