@@ -14,6 +14,12 @@ import FreeGuideEmail, { type FreeGuideEmailProps } from "@/emails/FreeGuideEmai
 import NewsletterWelcomeEmail, {
   type NewsletterWelcomeEmailProps,
 } from "@/emails/NewsletterWelcomeEmail"
+import ContactInquiryEmail, {
+  type ContactInquiryEmailProps,
+} from "@/emails/ContactInquiryEmail"
+import ContactConfirmationEmail, {
+  type ContactConfirmationEmailProps,
+} from "@/emails/ContactConfirmationEmail"
 import AdminNotificationEmail, {
   type AdminNotificationEmailProps,
   type AdminNotificationEventType,
@@ -239,6 +245,48 @@ export async function sendNewsletterWelcome(data: NewsletterWelcomeEmailProps & 
   return sendEmail({
     to,
     subject: "Welcome to the Midwife Dumebi Community!",
+    html,
+    react: emailComponent,
+  })
+}
+
+/**
+ * Send contact inquiry notification to admin
+ */
+export async function sendContactInquiry(data: ContactInquiryEmailProps) {
+  const emailComponent = ContactInquiryEmail(data)
+  const html = await render(emailComponent)
+
+  // Send to all admin emails sequentially to avoid rate limits
+  const results = []
+  for (let i = 0; i < ADMIN_EMAILS.length; i++) {
+    if (i > 0) {
+      await delay(600)
+    }
+    const result = await sendEmail({
+      to: ADMIN_EMAILS[i],
+      subject: `New Inquiry: ${data.customerName}`,
+      html,
+      react: emailComponent,
+    })
+    results.push(result)
+  }
+
+  return results
+}
+
+/**
+ * Send contact confirmation email to user
+ */
+export async function sendContactConfirmation(data: ContactConfirmationEmailProps & { to: string }) {
+  const { to, ...emailProps } = data
+
+  const emailComponent = ContactConfirmationEmail(emailProps)
+  const html = await render(emailComponent)
+
+  return sendEmail({
+    to,
+    subject: "Thanks for reaching out - Midwife Dumebi",
     html,
     react: emailComponent,
   })

@@ -15,14 +15,37 @@ const ContactSidebar = () => {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [message, setMessage] = useState("")
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle")
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const [errorMessage, setErrorMessage] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus("loading")
-    // Placeholder - connect to email service
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setStatus("success")
+    setErrorMessage("")
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setStatus("error")
+        setErrorMessage(data.error || "Something went wrong. Please try again.")
+        return
+      }
+
+      setStatus("success")
+      setName("")
+      setEmail("")
+      setMessage("")
+    } catch {
+      setStatus("error")
+      setErrorMessage("Something went wrong. Please try again.")
+    }
   }
 
   if (status === "success") {
@@ -79,6 +102,9 @@ const ContactSidebar = () => {
           rows={4}
           className="bg-background border-border resize-none"
         />
+        {status === "error" && (
+          <p className="text-sm text-red-600">{errorMessage}</p>
+        )}
         <Button
           type="submit"
           disabled={status === "loading"}
