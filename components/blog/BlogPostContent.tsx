@@ -97,9 +97,6 @@ const BlogPostContent = ({ post, relatedPosts = [] }: BlogPostContentProps) => {
     navigator.clipboard.writeText(shareUrl);
   };
 
-  // Check if we have Portable Text content or legacy markdown content
-  const hasPortableText = post.body && post.body.length > 0;
-
   return (
     <>
       {/* Article header */}
@@ -202,24 +199,10 @@ const BlogPostContent = ({ post, relatedPosts = [] }: BlogPostContentProps) => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              {hasPortableText ? (
+              {post.body && post.body.length > 0 && (
                 <PortableText
-                  value={post.body!}
+                  value={post.body}
                   components={portableTextComponents}
-                />
-              ) : (
-                <div
-                  className="prose prose-lg max-w-none
-                    prose-headings:font-serif prose-headings:text-text-primary prose-headings:font-semibold
-                    prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
-                    prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-                    prose-p:text-text-secondary prose-p:leading-relaxed
-                    prose-strong:text-text-primary prose-strong:font-semibold
-                    prose-ul:text-text-secondary prose-li:marker:text-sage
-                    prose-a:text-rose prose-a:no-underline hover:prose-a:underline"
-                  dangerouslySetInnerHTML={{
-                    __html: formatContent(post.content),
-                  }}
                 />
               )}
             </motion.article>
@@ -331,29 +314,6 @@ const BlogPostContent = ({ post, relatedPosts = [] }: BlogPostContentProps) => {
       <CTAStrip />
     </>
   );
-};
-
-// Simple markdown-like formatting for legacy content
-const formatContent = (content: string): string => {
-  return content
-    .replace(/## (.*)/g, "<h2>$1</h2>")
-    .replace(/### (.*)/g, "<h3>$1</h3>")
-    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-    .replace(/- (.*)/g, "<li>$1</li>")
-    .replace(/(<li>.*<\/li>\n?)+/g, "<ul>$&</ul>")
-    .replace(/\n\n/g, "</p><p>")
-    .replace(/^(.*)$/gm, (match) => {
-      if (
-        match.startsWith("<h") ||
-        match.startsWith("<ul") ||
-        match.startsWith("<li") ||
-        match.startsWith("</") ||
-        match.trim() === ""
-      ) {
-        return match;
-      }
-      return `<p>${match}</p>`;
-    });
 };
 
 export default BlogPostContent;

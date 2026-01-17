@@ -25,7 +25,7 @@ function sanityPostToBlogPost(post: SanityPost): BlogPost {
     slug: post.slug.current,
     title: post.title,
     excerpt: post.excerpt,
-    content: "", // Content is now in body as Portable Text
+    body: post.body,
     category: (post.category?.slug?.current || "resources") as BlogCategory,
     categoryLabel: post.category?.title || "Resources",
     author: post.author?.name || "Midwife Dumebi",
@@ -39,7 +39,6 @@ function sanityPostToBlogPost(post: SanityPost): BlogPost {
     imageAlt: post.featuredImage?.alt,
     imageCredit: post.featuredImage?.credit,
     imageCreditUrl: post.featuredImage?.creditUrl,
-    body: post.body,
     seo: post.seo,
   };
 }

@@ -66,12 +66,12 @@ export type SanityPost = {
   generationMeta?: SanityGenerationMeta;
 };
 
-// Legacy type for backward compatibility with existing components
 export type BlogPost = {
   slug: string;
   title: string;
   excerpt: string;
-  content: string;
+  /** Blog content as Portable Text blocks. Use toPlainText(body) from @portabletext/react for plain text. */
+  body?: PortableTextBlock[];
   category: BlogCategory;
   categoryLabel: string;
   author: string;
@@ -85,7 +85,6 @@ export type BlogPost = {
   imageAlt?: string;
   imageCredit?: string;
   imageCreditUrl?: string;
-  body?: PortableTextBlock[];
   seo?: SanitySeo;
 };
 

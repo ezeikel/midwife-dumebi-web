@@ -41,7 +41,6 @@ export const generateMetadata = async ({
       description: post.seo?.metaDescription || post.excerpt,
       type: "article",
       publishedTime: post.publishedAt,
-      authors: [post.author],
       url: `${baseUrl}/blog/${slug}`,
       images: post.image ? [{ url: post.image, alt: post.imageAlt }] : undefined,
     },
