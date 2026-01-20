@@ -1,6 +1,5 @@
 import type { Service } from "@/lib/services"
 import type { BlogPost } from "@/lib/blog/types"
-import { toPlainText } from "@portabletext/react"
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.midwifedumebi.com"
 
@@ -134,10 +133,6 @@ export function generateServiceSchema(service: Service) {
 
 // Article schema for blog posts
 export function generateArticleSchema(post: BlogPost) {
-  // Calculate word count from Portable Text body
-  const plainText = post.body ? toPlainText(post.body) : ""
-  const wordCount = plainText.trim() ? plainText.trim().split(/\s+/).length : undefined
-
   return {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -161,7 +156,6 @@ export function generateArticleSchema(post: BlogPost) {
       "@id": `${baseUrl}/blog/${post.slug}`,
     },
     articleSection: post.categoryLabel || "Midwifery",
-    ...(wordCount && { wordCount }),
     inLanguage: "en-GB",
   }
 }
