@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og"
-import { getBlogPost } from "@/lib/blog"
+import { client, isSanityConfigured } from "@/lib/sanity/client"
+import { postBySlugQuery } from "@/lib/sanity/queries"
 
 export const runtime = "edge"
 
@@ -10,14 +11,41 @@ export const size = {
 }
 export const contentType = "image/png"
 
+// Minimal type for OG image generation (no "use cache" here)
+type OGPost = {
+  title: string;
+  excerpt: string;
+  category?: { title: string };
+  featuredImage?: { url: string };
+}
+
+async function getPostForOG(slug: string): Promise<OGPost | null> {
+  if (!isSanityConfigured) return null;
+
+  try {
+    const post = await client.fetch(postBySlugQuery, { slug });
+    if (!post) return null;
+
+    return {
+      title: post.title,
+      excerpt: post.excerpt,
+      category: post.category,
+      featuredImage: post.featuredImage,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const post = await getBlogPost(slug)
+  const post = await getPostForOG(slug)
 
   // Fallback if post not found
   const title = post?.title || "Blog Post"
-  const category = post?.categoryLabel || "Midwifery"
+  const category = post?.category?.title || "Midwifery"
   const excerpt = post?.excerpt || ""
+  const image = post?.featuredImage?.url
 
   // Truncate title if too long
   const displayTitle = title.length > 60 ? `${title.substring(0, 57)}...` : title
@@ -59,9 +87,9 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             justifyContent: "center",
           }}
         >
-          {post?.image ? (
+          {image ? (
             <img
-              src={post.image}
+              src={image}
               alt=""
               width={380}
               height={380}

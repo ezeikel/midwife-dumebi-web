@@ -1,8 +1,26 @@
 import type { MetadataRoute } from "next"
-import { getAllPosts } from "@/lib/blog"
+import { client, isSanityConfigured } from "@/lib/sanity/client"
+import { postsQuery } from "@/lib/sanity/queries"
 import { services } from "@/lib/services"
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.midwifedumebi.com"
+
+// Minimal type for sitemap (no "use cache" needed for sitemap generation)
+type SitemapPost = {
+  slug: { current: string };
+  publishedAt: string;
+}
+
+async function getPostsForSitemap(): Promise<SitemapPost[]> {
+  if (!isSanityConfigured) return [];
+
+  try {
+    return await client.fetch(postsQuery);
+  } catch (error) {
+    console.error("Error fetching blog posts for sitemap:", error);
+    return [];
+  }
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages with priorities
@@ -66,18 +84,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   // Blog posts from Sanity
-  let blogPages: MetadataRoute.Sitemap = []
-  try {
-    const posts = await getAllPosts()
-    blogPages = posts.map((post) => ({
-      url: `${baseUrl}/blog/${post.slug}`,
-      lastModified: new Date(post.publishedAt),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    }))
-  } catch (error) {
-    console.error("Error fetching blog posts for sitemap:", error)
-  }
+  const posts = await getPostsForSitemap()
+  const blogPages: MetadataRoute.Sitemap = posts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug.current}`,
+    lastModified: new Date(post.publishedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }))
 
   return [...staticPages, ...servicePages, ...blogPages]
 }

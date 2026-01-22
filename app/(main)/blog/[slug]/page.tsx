@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getBlogPost, getAllPostSlugs } from "@/lib/blog";
+import { cacheLife, cacheTag } from "next/cache";
+import { PortableTextBlock } from "@portabletext/react";
+import { client, isSanityConfigured } from "@/lib/sanity/client";
+import { postBySlugQuery, postsQuery } from "@/lib/sanity/queries";
+import type { BlogPost, BlogCategory, SanitySeo } from "@/lib/blog/types";
 import BlogPostContent from "@/components/blog/BlogPostContent";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
 import RelatedServices from "@/components/seo/RelatedServices";
@@ -12,8 +16,110 @@ type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
 };
 
+// Sanity post type for internal use
+type SanityPost = {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt: string;
+  body?: PortableTextBlock[];
+  author: {
+    _id: string;
+    name: string;
+    slug: { current: string };
+    title?: string;
+    bio?: string;
+    image?: string;
+  };
+  category: {
+    _id: string;
+    title: string;
+    slug: { current: string };
+    description?: string;
+    color?: string;
+  };
+  featuredImage?: {
+    url: string;
+    alt: string;
+    credit?: string;
+    creditUrl?: string;
+  };
+  publishedAt: string;
+  readingTime?: number;
+  featured?: boolean;
+  status?: string;
+  seo?: SanitySeo;
+};
+
+/**
+ * Convert Sanity post to BlogPost format
+ */
+function sanityPostToBlogPost(post: SanityPost): BlogPost {
+  return {
+    slug: post.slug.current,
+    title: post.title,
+    excerpt: post.excerpt,
+    body: post.body,
+    category: (post.category?.slug?.current || "resources") as BlogCategory,
+    categoryLabel: post.category?.title || "Resources",
+    author: post.author?.name || "Midwife Dumebi",
+    authorTitle: post.author?.title,
+    authorBio: post.author?.bio,
+    authorImage: post.author?.image,
+    publishedAt: post.publishedAt,
+    readingTime: post.readingTime ? `${post.readingTime} min read` : "5 min read",
+    featured: post.featured || false,
+    image: post.featuredImage?.url,
+    imageAlt: post.featuredImage?.alt,
+    imageCredit: post.featuredImage?.credit,
+    imageCreditUrl: post.featuredImage?.creditUrl,
+    seo: post.seo,
+  };
+}
+
+/**
+ * Get a single blog post by slug (cached)
+ */
+async function getBlogPost(slug: string): Promise<BlogPost | undefined> {
+  "use cache";
+  cacheLife("blog-post");
+  cacheTag("blog-posts", `blog-post-${slug}`);
+
+  if (!isSanityConfigured) {
+    return undefined;
+  }
+  try {
+    const post: SanityPost | null = await client.fetch(postBySlugQuery, { slug });
+    if (!post) return undefined;
+    return sanityPostToBlogPost(post);
+  } catch (error) {
+    console.error("Error fetching post from Sanity:", error);
+    return undefined;
+  }
+}
+
+/**
+ * Get all post slugs for static generation
+ */
+async function getAllPostSlugs(): Promise<string[]> {
+  if (!isSanityConfigured) {
+    return [];
+  }
+  try {
+    const posts: SanityPost[] = await client.fetch(postsQuery);
+    return posts.map((post) => post.slug.current);
+  } catch (error) {
+    console.error("Error fetching post slugs from Sanity:", error);
+    return [];
+  }
+}
+
 export const generateStaticParams = async () => {
   const slugs = await getAllPostSlugs();
+  // Return placeholder if no posts exist to satisfy Cache Components validation
+  if (slugs.length === 0) {
+    return [{ slug: "placeholder" }];
+  }
   return slugs.map((slug) => ({
     slug,
   }));
