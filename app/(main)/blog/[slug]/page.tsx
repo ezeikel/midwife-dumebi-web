@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { cacheLife, cacheTag } from "next/cache";
 import { PortableTextBlock } from "@portabletext/react";
 import { client, isSanityConfigured } from "@/lib/sanity/client";
@@ -9,6 +10,7 @@ import BlogPostContent from "@/components/blog/BlogPostContent";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
 import RelatedServices from "@/components/seo/RelatedServices";
 import { generateArticleSchema } from "@/lib/seo/json-ld";
+import Loading from "@/components/Loading";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.midwifedumebi.com";
 
@@ -159,8 +161,16 @@ export const generateMetadata = async ({
   };
 };
 
-const BlogPostPage = async ({ params }: BlogPostPageProps) => {
-  const { slug } = await params;
+/**
+ * Inner component that fetches data and renders blog content.
+ * Must be inside Suspense boundary to defer data fetching during prerender.
+ */
+const BlogPostInner = async ({
+  paramsPromise,
+}: {
+  paramsPromise: Promise<{ slug: string }>;
+}) => {
+  const { slug } = await paramsPromise;
   const post = await getBlogPost(slug);
 
   if (!post) {
@@ -196,6 +206,18 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
         subtitle="These services are related to what you've been reading"
       />
     </>
+  );
+};
+
+/**
+ * Blog post page with Suspense boundary to defer data fetching.
+ * This avoids crypto.randomUUID() errors during Next.js 16 prerendering.
+ */
+const BlogPostPage = async ({ params }: BlogPostPageProps) => {
+  return (
+    <Suspense fallback={<Loading />}>
+      <BlogPostInner paramsPromise={params} />
+    </Suspense>
   );
 };
 

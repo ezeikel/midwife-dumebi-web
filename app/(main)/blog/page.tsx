@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { cacheLife, cacheTag } from "next/cache";
 import { PortableTextBlock } from "@portabletext/react";
 import { client, isSanityConfigured } from "@/lib/sanity/client";
@@ -6,6 +7,7 @@ import { postsQuery, featuredPostsQuery } from "@/lib/sanity/queries";
 import type { BlogPost, BlogCategory, SanitySeo } from "@/lib/blog/types";
 import BlogContent from "@/components/blog/BlogContent";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import Loading from "@/components/Loading";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.midwifedumebi.com";
 
@@ -133,7 +135,11 @@ export const metadata: Metadata = {
   },
 };
 
-const BlogPage = async () => {
+/**
+ * Inner component that fetches data and renders blog list.
+ * Must be inside Suspense boundary to defer data fetching during prerender.
+ */
+const BlogListInner = async () => {
   const [posts, featuredPosts] = await Promise.all([
     getAllPosts(),
     getFeaturedPosts(),
@@ -148,6 +154,18 @@ const BlogPage = async () => {
       </div>
       <BlogContent posts={posts} featuredPosts={featuredPosts} />
     </>
+  );
+};
+
+/**
+ * Blog list page with Suspense boundary to defer data fetching.
+ * This avoids crypto.randomUUID() errors during Next.js 16 prerendering.
+ */
+const BlogPage = async () => {
+  return (
+    <Suspense fallback={<Loading />}>
+      <BlogListInner />
+    </Suspense>
   );
 };
 
